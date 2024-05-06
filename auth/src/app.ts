@@ -38,14 +38,14 @@ export class Server {
    */
   private configureMiddleware(): void {
     const corsOptions: CorsOptions = {
-      origin: ['http://localhost:9000', '*'],
+      origin: ['http://localhost:9000'],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
       optionsSuccessStatus: 204,
     };
+    this.app.use(cors());
     this.app.use(express.json());
     this.loadRoutes();
-    this.app.use(cors(corsOptions));
   }
 
   /**
