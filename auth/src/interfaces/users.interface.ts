@@ -4,8 +4,6 @@ import { LoginInterface } from "./auth.interface";
 export enum UserRole {
   ADMIN = "admin",
   EMPLOYEE = "employee",
-  WHOLESALE = "whole_sale",
-  CLIENT = "client",
 }
 
 export interface User extends LoginInterface {

@@ -29,7 +29,7 @@ const UserSchema = new Schema<User>(
       type: String,
       enum: UserRole,
       required: false,
-      default: UserRole.CLIENT,
+      default: UserRole.ADMIN,
     },
     scopes: {
       type: [String],
