@@ -40,6 +40,7 @@ class AuthService extends UserRepository {
       // set password
       body.password = await this.utils.encryptPassword(body.password);
       body.scopes = this.scopes;
+      body.is_active = true;
 
       // create user on bbdd
       const user: any = await this.create(body);
