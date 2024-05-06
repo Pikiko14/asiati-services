@@ -8,10 +8,22 @@ import { MessageBrokerInterface, TypeNotification } from "../interfaces/broker.i
 
 class AuthService extends UserRepository {
   private utils: Utils;
+  private scopes: string[] = [];
 
   constructor() {
     super();
     this.utils = new Utils();
+    this.scopes = [
+      'create-users',
+      'list-users',
+      'edit-users',
+      'delete-users',
+      'create-business',
+      'list-business',
+      'edit-business',
+      'delete-business',
+      'list-meta-metric'
+    ];
   }
 
   /**
@@ -27,6 +39,7 @@ class AuthService extends UserRepository {
     try {
       // set password
       body.password = await this.utils.encryptPassword(body.password);
+      body.scopes = this.scopes;
 
       // create user on bbdd
       const user: any = await this.create(body);
