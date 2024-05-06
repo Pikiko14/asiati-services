@@ -38,7 +38,7 @@ export class Server {
    */
   private configureMiddleware(): void {
     const corsOptions: CorsOptions = {
-      origin: '*',
+      origin: ['http://localhost:9000', '*'],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
       optionsSuccessStatus: 204,
