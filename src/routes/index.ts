@@ -37,9 +37,9 @@ class RoutesIndex {
     readdirSync(this.PATH_ROUTER).filter((fileName) => {
       if (fileName !== "index.ts") {
         const nameFile = this.utils.splitFile(fileName, ".");
-        import(`./${nameFile}.routes`).then((moduleRouter) => {
+        import(`./${nameFile}.routes`).then((moduleRouter: any) => {
           console.log(`Loading ${nameFile} routers`);
-          this.router.use(`/`, moduleRouter.router);
+          this.router.use(`/api/v1/${nameFile}`, moduleRouter.router);
         });
       }
     });

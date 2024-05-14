@@ -28,7 +28,7 @@ export class Server {
    */
   constructor() {
     this.app = express();
-    this.setupMessageBroker();
+    // this.setupMessageBroker();
     this.PORT = parseInt(configuration.get('PORT')) || 3000; // Default port
     this.routeDirectoryPath = path.join(__dirname, './routes'); // Path to your routes directory
   }
@@ -43,7 +43,7 @@ export class Server {
       credentials: true,
       optionsSuccessStatus: 204,
     };
-    this.app.use(cors());
+    this.app.use(cors(corsOptions));
     this.app.use(express.json());
     this.loadRoutes();
   }

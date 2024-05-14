@@ -2,6 +2,7 @@ import { Response } from "express";
 import { Utils } from "../utils/utils";
 import messageBroker from "../utils/messageBroker";
 import { User } from "../interfaces/users.interface";
+import { EmailSenderService } from "../services/email.service";
 import { ResponseHandler } from "../utils/responseHandler";
 import UserRepository from "../repositories/user.repository";
 import { MessageBrokerInterface, TypeNotification } from "../interfaces/broker.interface";
@@ -9,6 +10,7 @@ import { MessageBrokerInterface, TypeNotification } from "../interfaces/broker.i
 class AuthService extends UserRepository {
   private utils: Utils;
   private scopes: string[] = [];
+  private emailSender: EmailSenderService;
 
   constructor() {
     super();
@@ -24,6 +26,7 @@ class AuthService extends UserRepository {
       'delete-business',
       'list-meta-metric'
     ];
+    this.emailSender = new EmailSenderService();
   }
 
   /**
@@ -55,7 +58,7 @@ class AuthService extends UserRepository {
         type_notification: TypeNotification.EMAIL,
         template: "welcome",
       }
-      await messageBroker.publishMessage('notifications', message);
+      await this.emailSender.sendMessage(message);
 
       // return data
       return ResponseHandler.createdResponse(
