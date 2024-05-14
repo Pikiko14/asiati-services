@@ -54,7 +54,13 @@ class AuthService extends UserRepository {
 
       // push notification queue
       const message: MessageBrokerInterface = {
-        data: user,
+        data: {
+          name: user.name,
+          last_name: user.last_name,
+          email: user.email,
+          token: user.confirmation_token,
+          recovery_token: user.recovery_token,
+        },
         type_notification: TypeNotification.EMAIL,
         template: "welcome",
       }
@@ -163,13 +169,19 @@ class AuthService extends UserRepository {
 
         // push notification queue
         const message: MessageBrokerInterface = {
-          data: user,
+          data: {
+            name: user.name,
+            last_name: user.last_name,
+            email: user.email,
+            token: user.confirmation_token,
+            recovery_token: user.recovery_token,
+          },
           type_notification: TypeNotification.EMAIL,
           template: "recovery",
           subject: "Recovery password",
           to: email
         }
-        await this.emailSender.sendMessage(message);;
+        await this.emailSender.sendMessage(message);
       }
       
       // return response

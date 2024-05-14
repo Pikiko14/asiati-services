@@ -63,31 +63,29 @@ export class EmailSenderService implements NotificationSenderInterface {
   async getTemplate(template: string, params: any): Promise<string> {
     try {
       // load html
-      const html = await fs.readFileSync(
-        `${this.pathTemplates}${template}.html`,
-      );
-
+      const html = await fs.readFileSync(`${this.pathTemplates}${template}.html`);
+  
       // validate some extra features
       if (template === 'welcome') {
         params.url_confirmation = `${configuration.get('URL_CONFIRMATION')}/api/v1/auth/confirm`;
         params.app_url = configuration.get('APP_URL') || 'https://localhost:8080';
       }
-
+  
       if (template === 'recovery') {
-        params.url_recovery = configuration.get('APP_URL') || 'https://localhost:8080';
+        params.url_recovery = configuration.get('APP_URL') || 'https://localhost:9000';
       }
-
+  
       // set html content
       let htmlWithContentParse = html.toString();
-      Object.keys(JSON.parse(JSON.stringify(params))).forEach(variable => {
+      Object.keys(params).forEach(variable => {
         const regex = new RegExp(`{{\\s*${variable}\\s*}}`, 'g');
         htmlWithContentParse = htmlWithContentParse.replace(regex, params[variable]);
       });
-
+  
       // return html
       return htmlWithContentParse;
     } catch (error: any) {
       throw new Error(`Failed loading template: ${error.message}`);
     }
-  }
+  }  
 }
