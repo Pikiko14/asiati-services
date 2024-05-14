@@ -169,7 +169,7 @@ class AuthService extends UserRepository {
           subject: "Recovery password",
           to: email
         }
-        await messageBroker.publishMessage('notifications', message);
+        await this.emailSender.sendMessage(message);;
       }
       
       // return response
