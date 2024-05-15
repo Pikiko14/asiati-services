@@ -78,6 +78,8 @@ const RegisterValidator = [
       }
       return true;
     }),
+  check("scopes")
+    .optional(),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ];

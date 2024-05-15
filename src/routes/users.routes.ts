@@ -1,8 +1,9 @@
 import  { Router} from "express";
-import { UserController } from "../controllers/users.controller";
 import {
     RegisterValidator,
 } from "../validators/auth.validator";
+import sessionCheck from "../middlewares/session.middleware";
+import { UserController } from "../controllers/users.controller";
 import perMissionMiddleware from "../middlewares/permission.middleware";
 
 // init router
@@ -16,7 +17,8 @@ const controller = new UserController();
  */
 router.post(
     '/',
-    perMissionMiddleware('crea-un-usuario'),
+    sessionCheck,
+    perMissionMiddleware('create-users'),
     RegisterValidator,
     controller.saveUser
 );

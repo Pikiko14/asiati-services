@@ -188,7 +188,7 @@ class AuthService extends UserRepository {
       return ResponseHandler.successResponse(
         res,
         { token: user.recovery_token },
-        "Email recovery send correctly"
+        "Se ha enviado un correo electrónico con las instrucciones para restablecer su contraseñas"
       );
     } catch (error: any) {
       throw error.message;
@@ -209,7 +209,7 @@ class AuthService extends UserRepository {
         user.recovery_token = null;
         user.password = await this.utils.encryptPassword(body.password);
         await this.update(user.id, user);
-        return ResponseHandler.successResponse(res, user, "Password changed correctly");
+        return ResponseHandler.successResponse(res, user, "Contraseña cambiada correctamente");
       } else {
         throw new Error("User not found");
       }
