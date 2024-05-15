@@ -63,6 +63,46 @@ class UserService extends UserRepository {
       throw error.message;
     }
   }
+
+  /**
+   * List all users
+   */
+  public async listUsers (
+    res: Response,
+    page: number,
+    perPage: number,
+    search: string
+  ): Promise<User[] | void | null | ResponseRequestInterface> {
+    try {
+      // validamos la data de la paginacion
+      page = page || 1;
+      perPage = perPage || 12;
+      const skip = (page - 1) * perPage;
+
+      // Iniciar busqueda
+      let query: any = {};
+      if (search) {
+        const searchRegex = new RegExp(search, 'i');
+        query = {
+          $or: [
+            { name: searchRegex },
+          ],
+        };
+      }
+
+      // do query
+      const users = await this.paginate(query, skip, perPage);
+
+      // return data
+      return ResponseHandler.createdResponse(
+        res,
+        users,
+        "Listado de usuarios."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
 }
 
 export { UserService };

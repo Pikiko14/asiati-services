@@ -1,7 +1,5 @@
-import  { Router} from "express";
-import {
-    RegisterValidator,
-} from "../validators/auth.validator";
+import { Router } from "express";
+import { RegisterValidator } from "../validators/auth.validator";
 import sessionCheck from "../middlewares/session.middleware";
 import { UserController } from "../controllers/users.controller";
 import perMissionMiddleware from "../middlewares/permission.middleware";
@@ -16,12 +14,22 @@ const controller = new UserController();
  * Do register user
  */
 router.post(
-    '/',
-    sessionCheck,
-    perMissionMiddleware('create-users'),
-    RegisterValidator,
-    controller.saveUser
+  "/",
+  sessionCheck,
+  perMissionMiddleware("create-users"),
+  RegisterValidator,
+  controller.saveUser
 );
+
+/**
+ * Do register user
+ */
+router.get(
+    "/",
+    sessionCheck,
+    perMissionMiddleware("list-users"),
+    controller.listUsers
+  );
 
 // export router
 export { router };

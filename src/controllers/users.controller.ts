@@ -26,4 +26,21 @@ export class UserController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   }
+
+  /**
+   * List all users
+   */
+  listUsers = async (req: Request, res: Response): Promise<void | User | any | ResponseRequestInterface>=> {
+    try {
+      const { page, perPage, search } = req.query as any; // get pagination data
+      return await this.service.listUsers(
+        res,
+        page,
+        perPage,
+        search,
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
 }

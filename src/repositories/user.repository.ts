@@ -67,6 +67,16 @@ class UserRepository {
   public async update (id: string, body: User): Promise<User | void | null> {
     return await this.model.findByIdAndUpdate(id, body);
   }
+
+  /**
+   * paginate users
+   * @param page
+   * @param perPage
+   * @param search
+   */
+  public async paginate (query: any, skip: number, perPage: number): Promise<User[] | void | null> {
+    return await this.model.find(query).skip(skip).limit(perPage)
+  }
 }
 
 export default UserRepository;

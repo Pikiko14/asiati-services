@@ -80,6 +80,8 @@ const RegisterValidator = [
     }),
   check("scopes")
     .optional(),
+  check("phone")
+    .optional(),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ];
