@@ -13,7 +13,7 @@ export class UserController {
   }
 
   /**
-   * Register new user
+   * create new user
    * @param req Express request
    * @param res Express response
    * @returns Promise<void>
@@ -45,7 +45,7 @@ export class UserController {
   }
 
   /**
-   * List all users
+   * delete users
    */
   deleteUsers = async (req: Request, res: Response): Promise<void | User | any | ResponseRequestInterface>=> {
     try {
@@ -53,6 +53,23 @@ export class UserController {
       return await this.service.deleteUsers(
         res,
         id
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
+
+  /**
+   * update users
+   */
+  updateUsers = async (req: Request, res: Response): Promise<void | User | any | ResponseRequestInterface>=> {
+    try {
+      const { id } = req.params as any; // get id from params
+      const body = matchedData(req) as User;
+      return await this.service.updateUsers(
+        res,
+        id,
+        body
       );
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);

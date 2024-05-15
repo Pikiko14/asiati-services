@@ -3,6 +3,7 @@ import { RegisterValidator } from "../validators/auth.validator";
 import sessionCheck from "../middlewares/session.middleware";
 import { UserController } from "../controllers/users.controller";
 import perMissionMiddleware from "../middlewares/permission.middleware";
+import { UserIdValidator } from "../validators/users.validator";
 
 // init router
 const router = Router();
@@ -37,9 +38,22 @@ router.get(
  */
 router.delete(
   "/:id",
+  UserIdValidator,
   sessionCheck,
   perMissionMiddleware("delete-users"),
   controller.deleteUsers
+);
+
+/**
+ * Do update user
+ */
+router.put(
+  "/:id",
+  UserIdValidator,
+  sessionCheck,
+  perMissionMiddleware("update-users"),
+  RegisterValidator,
+  controller.updateUsers
 );
 
 // export router

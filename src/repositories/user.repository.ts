@@ -77,6 +77,14 @@ class UserRepository {
   public async paginate (query: any, skip: number, perPage: number): Promise<User[] | void | null> {
     return await this.model.find(query).skip(skip).limit(perPage)
   }
+
+  /**
+   * get user by id
+   * @param id
+   */
+  public async getUserById(id: string): Promise<User | void | null> {
+    return this.model.findById(id);
+  }
 }
 
 export default UserRepository;

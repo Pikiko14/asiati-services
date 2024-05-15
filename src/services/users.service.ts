@@ -106,6 +106,9 @@ class UserService extends UserRepository {
 
   /**
    * delete users
+   * @param res
+   * @param { string } id
+   * @returns A Promise of 1
    */
   public async deleteUsers(res: Response, id: string): Promise<User | void | null | ResponseRequestInterface> {
     try {
@@ -114,6 +117,26 @@ class UserService extends UserRepository {
         res,
         user,
         "Usuario eliminado correctamente."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
+
+  /**
+   * Update users
+   * @param res
+   * @param { string } id
+   * @param { User } body
+   * @returns A Promise of 1
+   */
+  public async updateUsers(res: Response, id: string, body: User): Promise<User | void | null | ResponseRequestInterface> {
+    try {
+      const user = await this.update(id, body);
+      return ResponseHandler.createdResponse(
+        res,
+        user,
+        "Usuario actualizado correctamente."
       );
     } catch (error: any) {
       throw error.message;
