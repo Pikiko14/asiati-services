@@ -39,7 +39,7 @@ router.delete(
   "/:id",
   sessionCheck,
   perMissionMiddleware("delete-users"),
-  controller.listUsers
+  controller.deleteUsers
 );
 
 // export router
