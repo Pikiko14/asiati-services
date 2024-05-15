@@ -103,6 +103,22 @@ class UserService extends UserRepository {
       throw error.message;
     }
   }
+
+  /**
+   * delete users
+   */
+  public async deleteUsers(res: Response, id: string): Promise<User | void | null | ResponseRequestInterface> {
+    try {
+      const user = await this.deleteUser(id);
+      return ResponseHandler.createdResponse(
+        res,
+        user,
+        "Usuario eliminado correctamente."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
 }
 
 export { UserService };

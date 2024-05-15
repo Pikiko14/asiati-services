@@ -43,4 +43,19 @@ export class UserController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   }
+
+  /**
+   * List all users
+   */
+  deleteUsers = async (req: Request, res: Response): Promise<void | User | any | ResponseRequestInterface>=> {
+    try {
+      const { id } = req.params as any; // get pagination data
+      return await this.service.deleteUsers(
+        res,
+        id
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
 }

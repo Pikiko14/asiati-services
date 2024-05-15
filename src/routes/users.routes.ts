@@ -11,7 +11,7 @@ const router = Router();
 const controller = new UserController();
 
 /**
- * Do register user
+ * Do create user
  */
 router.post(
   "/",
@@ -22,14 +22,25 @@ router.post(
 );
 
 /**
- * Do register user
+ * Do list user
  */
 router.get(
-    "/",
-    sessionCheck,
-    perMissionMiddleware("list-users"),
-    controller.listUsers
-  );
+  "/",
+  sessionCheck,
+  perMissionMiddleware("list-users"),
+  controller.listUsers
+);
+
+
+/**
+ * Do delete user
+ */
+router.delete(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("delete-users"),
+  controller.listUsers
+);
 
 // export router
 export { router };
