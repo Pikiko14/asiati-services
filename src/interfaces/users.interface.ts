@@ -3,13 +3,14 @@ import { LoginInterface } from "./auth.interface";
 
 export enum UserRole {
   ADMIN = "admin",
-  EMPLOYEE = "employee",
+  CEO = "ceo",
 }
 
 export interface User extends LoginInterface {
   id?: string;
   _id?: string;
   email: string;
+  phone?: string;
   role?: UserRole;
   scopes?: string[];
   is_active?: boolean;

@@ -28,7 +28,7 @@ const UserSchema = new Schema<User>(
     role: {
       type: String,
       enum: UserRole,
-      required: false,
+      required: true,
       default: UserRole.ADMIN,
     },
     scopes: {
@@ -36,6 +36,7 @@ const UserSchema = new Schema<User>(
     },
     recovery_token: {
       type: String,
+      required: false,
       default: null,
     },
     profile_pictury: {
@@ -48,6 +49,12 @@ const UserSchema = new Schema<User>(
     },
     confirmation_token: {
       type: String,
+      required: false,
+      default: null,
+    },
+    phone: {
+      type: String,
+      required: false,
       default: null,
     }
   },
