@@ -3,7 +3,7 @@ import { RegisterValidator } from "../validators/auth.validator";
 import sessionCheck from "../middlewares/session.middleware";
 import { UserController } from "../controllers/users.controller";
 import perMissionMiddleware from "../middlewares/permission.middleware";
-import { UserIdValidator } from "../validators/users.validator";
+import { UserIdValidator, UpdateUserValidator } from "../validators/users.validator";
 
 // init router
 const router = Router();
@@ -52,7 +52,7 @@ router.put(
   UserIdValidator,
   sessionCheck,
   perMissionMiddleware("edit-users"),
-  RegisterValidator,
+  UpdateUserValidator,
   controller.updateUsers
 );
 

@@ -135,6 +135,9 @@ class UserService extends UserRepository {
    */
   public async updateUsers(res: Response, id: string, body: User): Promise<User | void | null | ResponseRequestInterface> {
     try {
+      if (body.password.length > 0) {
+        body.password = await this.utils.encryptPassword(body.password);
+      }
       const user = await this.update(id, body);
       return ResponseHandler.createdResponse(
         res,
