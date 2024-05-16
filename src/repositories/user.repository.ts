@@ -66,7 +66,7 @@ class UserRepository {
    * @param body
    */
   public async update (id: string, body: User): Promise<User | void | null> {
-    return await this.model.findByIdAndUpdate(id, body);
+    return await this.model.findByIdAndUpdate(id, body, { new: true });
   }
 
   /**
