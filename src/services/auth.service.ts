@@ -4,7 +4,7 @@ import messageBroker from "../utils/messageBroker";
 import { User } from "../interfaces/users.interface";
 import { EmailSenderService } from "../services/email.service";
 import { ResponseHandler } from "../utils/responseHandler";
-import UserRepository from "../repositories/user.repository";
+import UserRepository from "../repositories/users.repository";
 import { MessageBrokerInterface, TypeNotification } from "../interfaces/broker.interface";
 
 class AuthService extends UserRepository {

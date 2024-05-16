@@ -3,7 +3,7 @@ import { Utils } from "../utils/utils";
 import { User } from "../interfaces/users.interface";
 import { EmailSenderService } from "./email.service";
 import { ResponseHandler } from "../utils/responseHandler";
-import UserRepository from "../repositories/user.repository";
+import UserRepository from "../repositories/users.repository";
 import { ResponseRequestInterface } from "../interfaces/response.interface";
 import { MessageBrokerInterface, TypeNotification } from "../interfaces/broker.interface";
 
@@ -66,6 +66,11 @@ class UserService extends UserRepository {
 
   /**
    * List all users
+   * @param { Response } res The response object
+   * @param page The page number
+   * @param perPage The number of items per page
+   * @param search The search string
+   * @returns A Promise of 1
    */
   public async listUsers (
     res: Response,
@@ -156,6 +161,7 @@ class UserService extends UserRepository {
 
   /**
    * List users for select
+   * @param res
    */
   public async listForSelect(res: Response): Promise<User[] | void | null | ResponseRequestInterface> {
     try {

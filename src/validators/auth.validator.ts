@@ -1,7 +1,7 @@
 import { Utils } from "../utils/utils";
 import { check } from "express-validator";
 import { Request, Response, NextFunction } from "express";
-import UserRepository from "../repositories/user.repository";
+import UserRepository from "../repositories/users.repository";
 import { handlerValidator } from "../utils/handler.validator";
 
 // Instancia todas las clases necesarias
