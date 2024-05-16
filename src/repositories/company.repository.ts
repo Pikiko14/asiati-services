@@ -14,7 +14,7 @@ class CompaniesRepository {
    * Get Company by name
    * @param name String
    */
-  public async getCompanyByCompanyname(name: string): Promise<Company | void | null> {
+  public async getCompanyByCompanyName(name: string): Promise<Company | void | null> {
     return await this.model.findOne({
       $or: [
         { name: name },
