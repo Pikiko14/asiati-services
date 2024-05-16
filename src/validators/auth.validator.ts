@@ -82,6 +82,8 @@ const RegisterValidator = [
     .optional(),
   check("phone")
     .optional(),
+  check("role")
+    .optional(),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ];
