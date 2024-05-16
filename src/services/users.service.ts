@@ -86,6 +86,11 @@ class UserService extends UserRepository {
         query = {
           $or: [
             { name: searchRegex },
+            { email: searchRegex },
+            { phone: searchRegex },
+            { username: searchRegex },
+            { last_name: searchRegex },
+            { role: searchRegex },
           ],
         };
       }

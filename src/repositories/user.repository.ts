@@ -77,7 +77,7 @@ class UserRepository {
    */
   public async paginate (query: any, skip: number, perPage: number): Promise<PaginationInterface> {
     const users = await this.model.find(query).skip(skip).limit(perPage);
-    const totalUsers = await this.model.countDocuments();
+    const totalUsers = await this.model.find(query).countDocuments();
     return {
       data: users,
       totalItems: totalUsers
