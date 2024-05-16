@@ -96,7 +96,10 @@ class UserService extends UserRepository {
       // return data
       return ResponseHandler.createdResponse(
         res,
-        users,
+        {
+          users: users.data,
+          totalItems: users.totalItems
+        },
         "Listado de usuarios."
       );
     } catch (error: any) {

@@ -4,3 +4,8 @@ export interface ResponseRequestInterface {
     message?: string;
     error?: boolean;
 }
+
+export interface PaginationInterface {
+    data: any[];
+    totalItems: number;
+}

@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 import UserModel from "../models/users.model";
 import { User } from "../interfaces/users.interface";
+import { PaginationInterface } from "../interfaces/response.interface";
 
 class UserRepository {
   private readonly model: Model<User>;
@@ -74,8 +75,13 @@ class UserRepository {
    * @param perPage
    * @param search
    */
-  public async paginate (query: any, skip: number, perPage: number): Promise<User[] | void | null> {
-    return await this.model.find(query).skip(skip).limit(perPage)
+  public async paginate (query: any, skip: number, perPage: number): Promise<PaginationInterface> {
+    const users = await this.model.find(query).skip(skip).limit(perPage);
+    const totalUsers = await this.model.countDocuments();
+    return {
+      data: users,
+      totalItems: totalUsers
+    }
   }
 
   /**
