@@ -56,5 +56,15 @@ router.put(
   controller.updateUsers
 );
 
+/**
+ * Do list user
+ */
+router.get(
+  "/for-select",
+  sessionCheck,
+  perMissionMiddleware("list-users"),
+  controller.listForSelect
+);
+
 // export router
 export { router };

@@ -91,6 +91,13 @@ class UserRepository {
   public async getUserById(id: string): Promise<User | void | null> {
     return this.model.findById(id);
   }
+
+  /**
+   * Get all users for select
+   */
+  public async listSelect (): Promise<User[]> {
+    return await this.model.find({}).select("id name last_name");
+  }
 }
 
 export default UserRepository;

@@ -153,6 +153,22 @@ class UserService extends UserRepository {
       throw error.message;
     }
   }
+
+  /**
+   * List users for select
+   */
+  public async listForSelect(res: Response): Promise<User[] | void | null | ResponseRequestInterface> {
+    try {
+      const users = await this.listSelect();
+      return ResponseHandler.createdResponse(
+        res,
+        users,
+        "Listado de usuarios."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
 }
 
 export { UserService };

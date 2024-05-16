@@ -75,4 +75,17 @@ export class UserController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   }
+
+  /**
+   * list for select
+   */
+  listForSelect = async (req: Request, res: Response): Promise<void | User | any | ResponseRequestInterface>=> {
+    try {
+      return await this.service.listForSelect(
+        res
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
 }
