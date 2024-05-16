@@ -51,7 +51,7 @@ router.put(
   "/:id",
   UserIdValidator,
   sessionCheck,
-  perMissionMiddleware("update-users"),
+  perMissionMiddleware("edit-users"),
   RegisterValidator,
   controller.updateUsers
 );
