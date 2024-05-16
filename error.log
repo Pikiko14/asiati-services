@@ -1,2 +1,21 @@
 {"error":"Failed to send email: Failed loading template: Expected property name or '}' in JSON at position 4","level":"error","timestamp":"2024-05-14T21:35:15.401Z"}
 {"error":"Wrong password","level":"error","message":"Error on login","timestamp":"2024-05-14T21:49:33.515Z"}
+{"error":"Wrong password","level":"error","message":"Error on login","timestamp":"2024-05-16T14:23:59.883Z"}
+{"error":"Wrong password","level":"error","message":"Error on login","timestamp":"2024-05-16T14:25:26.408Z"}
+{"error":"Wrong password","level":"error","message":"Error on login","timestamp":"2024-05-16T14:25:41.831Z"}
+{"error":"Wrong password","level":"error","timestamp":"2024-05-16T14:26:19.748Z"}
+{"error":"Wrong password","level":"error","timestamp":"2024-05-16T14:26:20.780Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:27:55.644Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:28:04.555Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:29:29.438Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:29:45.973Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:30:02.668Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:34:02.670Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:34:04.775Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:34:29.689Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:34:49.873Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:35:14.590Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:36:19.835Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:36:46.897Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:38:27.001Z"}
+{"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-16T14:38:46.498Z"}

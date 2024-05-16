@@ -51,7 +51,7 @@ export class AuthController {
       const body = matchedData(req) as User;
       await this.service.login(res, body);
     } catch (error: any) {
-      ResponseHandler.handleInternalError(res, error, 'Error on login');
+      ResponseHandler.handleInternalError(res, error, error.message);
     }
   }
 

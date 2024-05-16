@@ -9,7 +9,6 @@ const repository = new UserRepository();
 // id validator
 const UserIdValidator = [
   check("id")
-    .withMessage("User id does not exist")
     .notEmpty()
     .withMessage("user id is empty")
     .isString()

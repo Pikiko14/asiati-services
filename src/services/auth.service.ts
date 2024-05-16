@@ -139,12 +139,12 @@ class AuthService extends UserRepository {
         )
         if (comparePassword) {
           const token = await this.utils.generateToken(user);
-          return ResponseHandler.successResponse(res, { user, token }, "Login correctly");
+          return ResponseHandler.successResponse(res, { user, token }, "Has iniciado sesión correctamente");
         } else {
-          throw new Error("Wrong password");
+          throw new Error("Contraseña incorrecta");
         }
       } else {
-        throw new Error("User not found");
+        throw new Error("Contraseña incorrecta");
       }
     } catch (error: any) {
       throw error.message;
