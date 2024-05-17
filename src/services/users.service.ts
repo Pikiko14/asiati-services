@@ -29,7 +29,7 @@ class UserService extends UserRepository {
   ): Promise<User | void | null | ResponseRequestInterface> {
     try {
       // set password
-      body.password = await this.utils.encryptPassword(body.password);
+      body.password = await this.utils.encryptPassword(body.password ? body.password : '');
       body.is_active = true;
 
       // create user on bbdd
@@ -145,9 +145,12 @@ class UserService extends UserRepository {
    */
   public async updateUsers(res: Response, id: string, body: User): Promise<User | void | null | ResponseRequestInterface> {
     try {
-      if (body.password.length > 0) {
+      if (body.password && body.password.length > 0) {
         body.password = await this.utils.encryptPassword(body.password);
+      } else if ('password' in body) {
+        delete body.password;
       }
+      console.log(body);
       const user = await this.update(id, body);
       return ResponseHandler.createdResponse(
         res,

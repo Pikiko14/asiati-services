@@ -2,7 +2,7 @@ import { User } from "./users.interface";
 
 export interface LoginInterface {
   username: string;
-  password: string;
+  password?: string;
 }
 
 export interface LoginReturn {

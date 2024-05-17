@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { Utils } from "../utils/utils";
-import messageBroker from "../utils/messageBroker";
 import { User } from "../interfaces/users.interface";
 import { EmailSenderService } from "../services/email.service";
 import { ResponseHandler } from "../utils/responseHandler";
@@ -41,7 +40,7 @@ class AuthService extends UserRepository {
   ): Promise<User | void | null> {
     try {
       // set password
-      body.password = await this.utils.encryptPassword(body.password);
+      body.password = await this.utils.encryptPassword(body.password as string);
       body.scopes = this.scopes;
       body.is_active = true;
 
@@ -134,8 +133,8 @@ class AuthService extends UserRepository {
       if (user) {
         // compare password
         const comparePassword = await this.utils.comparePassword(
-          user.password,
-          body.password,
+          user.password as string,
+          body.password as string,
         )
         if (comparePassword) {
           const token = await this.utils.generateToken(user);
@@ -207,7 +206,7 @@ class AuthService extends UserRepository {
       if (user) {
         // set new password
         user.recovery_token = null;
-        user.password = await this.utils.encryptPassword(body.password);
+        user.password = await this.utils.encryptPassword(body.password as string);
         await this.update(user.id, user);
         return ResponseHandler.successResponse(res, user, "Contraseña cambiada correctamente");
       } else {
