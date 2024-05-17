@@ -75,7 +75,10 @@ class CompaniesRepository {
    * @param search
    */
   public async paginate (query: any, skip: number, perPage: number): Promise<PaginationInterface> {
-    const companys = await this.model.find(query).skip(skip).limit(perPage);
+    const companys = await this.model.find(query)
+    .skip(skip)
+    .limit(perPage)
+    .populate('responsable');
     const totalCompanys = await this.model.find(query).countDocuments();
     return {
       data: companys,
