@@ -98,7 +98,7 @@ class CompaniesRepository {
    * Get all Companys for select
    */
   public async listSelect (): Promise<Company[]> {
-    return await this.model.find({}).select("id name last_name");
+    return await this.model.find({}).select("id name");
   }
 }
 
