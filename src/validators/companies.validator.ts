@@ -61,7 +61,7 @@ const createCompanyValidator = [
         throw new Error("El responsable no existe en nuestra base de datos");
       }
       return true;
-    }),,
+    }),
   check("url")
     .exists()
     .withMessage("La url no existe")
@@ -71,7 +71,7 @@ const createCompanyValidator = [
     .withMessage("La url debe ser un string")
     .isLength({ min: 1, max: 250 })
     .withMessage("La url debe tener un mínimo de 1 caracter")
-    .matches(/^(https?:\/\/)?(([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,})(:\d+)?(\/[^\s]*)?$/)
+    .matches(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/)
     .withMessage("Formato de url incorrecto"),
   check("meta_app_identifier")
     .exists()
@@ -90,7 +90,7 @@ const createCompanyValidator = [
     .isString()
     .withMessage("El secret de la app debe ser un string")
     .isLength({ min: 1, max: 90 })
-    .withMessage("La url debe tener un mínimo de 1 y un maximo de 90 caracteres"),,
+    .withMessage("La url debe tener un mínimo de 1 y un maximo de 90 caracteres"),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ]; 
