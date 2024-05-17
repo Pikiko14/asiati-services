@@ -114,7 +114,8 @@ export class CompaniesService extends CompaniesRepository {
    */
   public async updateCompany(res: Response, id: string, body: Company): Promise<Company | void | null | ResponseRequestInterface> {
     try {
-      const company = await this.update(id, body);
+      let company = await this.update(id, body);
+      company = await this.getCompanyById(id);
       return ResponseHandler.createdResponse(
         res,
         company,

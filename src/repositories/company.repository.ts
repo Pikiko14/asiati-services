@@ -91,7 +91,7 @@ class CompaniesRepository {
    * @param id
    */
   public async getCompanyById(id: string): Promise<Company | void | null> {
-    return this.model.findById(id);
+    return this.model.findById(id).populate('responsable');
   }
 
   /**
