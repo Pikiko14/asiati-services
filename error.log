@@ -25,3 +25,5 @@
 {"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-17T16:24:06.492Z"}
 {"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-17T16:24:43.915Z"}
 {"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-17T16:24:48.695Z"}
+{"error":"Cast to ObjectId failed for value \"/mer/i\" (type RegExp) at path \"responsable\" for model \"companies\"","level":"error","timestamp":"2024-05-17T19:14:22.196Z"}
+{"error":"Cast to ObjectId failed for value \"/Merck/i\" (type RegExp) at path \"responsable\" for model \"companies\"","level":"error","timestamp":"2024-05-17T19:15:37.791Z"}

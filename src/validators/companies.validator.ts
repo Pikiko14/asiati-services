@@ -10,7 +10,7 @@ const userRepository = new UserRepository()
 
 // id validator
 const CompanyIdValidator = [
-  check("_id")
+  check("id")
     .notEmpty()
     .withMessage("Debes especificar la tienda")
     .isString()

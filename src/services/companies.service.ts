@@ -21,7 +21,8 @@ export class CompaniesService extends CompaniesRepository {
   public async saveCompany(res: Response, body: Company): Promise<Company | void | null | ResponseRequestInterface> {
     try {
       // save companies
-      const company = await this.create(body);
+      let company = await this.create(body);
+      company = await this.getCompanyById(company.id as string) as Company;
 
       // return data
       return ResponseHandler.createdResponse(
@@ -61,7 +62,6 @@ export class CompaniesService extends CompaniesRepository {
         query = {
           $or: [
             { name: searchRegex },
-            { responsable: searchRegex },
             { url: searchRegex },
             { meta_app_secret: searchRegex },
             { meta_app_identifier: searchRegex },
