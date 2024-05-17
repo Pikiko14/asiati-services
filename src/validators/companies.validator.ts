@@ -1,10 +1,12 @@
 import { check } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import { handlerValidator } from "../utils/handler.validator";
+import UserRepository from "../repositories/users.repository";
 import CompaniesRepository from "../repositories/company.repository";
 
 // instanciate all class neccesaries
 const repository = new CompaniesRepository();
+const userRepository = new UserRepository()
 
 // id validator
 const CompanyIdValidator = [
@@ -36,10 +38,10 @@ const createCompanyValidator = [
     .withMessage("El campo nombre debe ser un string")
     .isLength({ min: 5, max: 90 })
     .withMessage("El nombre debe tener entre 5 y 90 caracteres")
-    .custom(async (username: string, { req }) => {
+    .custom(async (name: string, { req }) => {
       const { id } = req.params as any; // get param user to edit
-      const existUser = await repository.getCompanyByCompanyName(username);
-      if (existUser && existUser.id !== id) {
+      const existName = await repository.getCompanyByCompanyName(name);
+      if (existName && existName.id !== id) {
         throw new Error("El nombre ya existe en nuestra base de datos");
       }
       return true;
@@ -52,7 +54,14 @@ const createCompanyValidator = [
     .isString()
     .withMessage("El responsable debe ser un string")
     .isMongoId()
-    .withMessage("El responsable debe ser un id correcto"),
+    .withMessage("El responsable debe ser un id correcto")
+    .custom(async (responsable: string, { req }) => {
+      const existResponsable = await userRepository.getUserById(responsable);
+      if (!existResponsable) {
+        throw new Error("El responsable no existe en nuestra base de datos");
+      }
+      return true;
+    }),,
   check("url")
     .exists()
     .withMessage("La url no existe")
@@ -60,8 +69,28 @@ const createCompanyValidator = [
     .withMessage("La url está vacío")
     .isString()
     .withMessage("La url debe ser un string")
-    .isLength({ min: 3, max: 90 })
-    .withMessage("El apellido debe tener un mínimo de 3 caracteres"),
+    .isLength({ min: 1, max: 250 })
+    .withMessage("La url debe tener un mínimo de 1 caracter")
+    .matches(/^(https?:\/\/)?(([a-zA-Z0-9\-_]+\.)+[a-zA-Z]{2,})(:\d+)?(\/[^\s]*)?$/)
+    .withMessage("Formato de url incorrecto"),
+  check("meta_app_identifier")
+    .exists()
+    .withMessage("El identificador de la app no existe")
+    .notEmpty()
+    .withMessage("El identificador de la app está vacío")
+    .isNumeric()
+    .withMessage("El identificador de la app debe ser numérico")
+    .isLength({ min: 1, max: 90 })
+    .withMessage("La url debe tener un mínimo de 1 y un maximo de 90 caracteres"),
+  check("meta_app_secret")
+    .exists()
+    .withMessage("El secret de la app no existe")
+    .notEmpty()
+    .withMessage("El secret de la app está vacío")
+    .isString()
+    .withMessage("El secret de la app debe ser un string")
+    .isLength({ min: 1, max: 90 })
+    .withMessage("La url debe tener un mínimo de 1 y un maximo de 90 caracteres"),,
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ]; 
