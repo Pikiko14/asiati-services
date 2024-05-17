@@ -9,6 +9,7 @@ import cors, { CorsOptions } from 'cors';
 import Database from '../configuration/db';
 import express, { Application } from 'express';
 import messageBroker from './utils/messageBroker';
+import { rateLimiter } from './middlewares/rateLimiter';
 import configuration from '../configuration/configuration';
 
 // Classes
@@ -45,6 +46,7 @@ export class Server {
     };
     this.app.use(cors(corsOptions));
     this.app.use(express.json());
+    this.app.use(rateLimiter);
     this.loadRoutes();
   }
 
