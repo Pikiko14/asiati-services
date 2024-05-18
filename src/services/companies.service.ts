@@ -1,6 +1,8 @@
 import { Response } from "express";
+import MetricsService from "./metrics/metrics.service";
 import { ResponseHandler } from "../utils/responseHandler";
 import { Company } from "../interfaces/companies.interface";
+import { TypeMetrics } from "../interfaces/metrics.interface";
 import { ResponseRequestInterface } from "../interfaces/response.interface";
 import CompaniesRepository from "../repositories/company.repository";
 
@@ -138,6 +140,29 @@ export class CompaniesService extends CompaniesRepository {
         res,
         users,
         "Listado de compañias."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
+
+  /**
+   * List meta data from company
+   * @param res
+   * @param { string } id
+   */
+  public async getMetrics(res: Response, id: string): Promise<Company | void | null | ResponseRequestInterface> {
+    try {
+      // get meta metric
+      const metaMetrics = MetricsService.loadMetrics(TypeMetrics.META, id);
+
+      // return data
+      return ResponseHandler.createdResponse(
+        res,
+        {
+          metaMetrics
+        },
+        "Listado de metricas."
       );
     } catch (error: any) {
       throw error.message;

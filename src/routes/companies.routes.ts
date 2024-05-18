@@ -65,5 +65,16 @@ router.get(
   controller.listForSelect
 );
 
+/**
+ * List metrics for one store
+ */
+router.get(
+  '/:id/metrics',
+  CompanyIdValidator,
+  sessionCheck,
+  perMissionMiddleware("list-meta-metric"),
+  controller.getMetrics
+)
+
 // export router
 export { router };

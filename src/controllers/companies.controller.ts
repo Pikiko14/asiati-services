@@ -29,6 +29,9 @@ export class CompaniesController {
 
   /**
    * List all companies
+   * @param req Express request
+   * @param res Express response
+   *  @returns Promise<void>
    */
   listCompanies = async (req: Request, res: Response): Promise<void | Company | any | ResponseRequestInterface>=> {
     try {
@@ -46,6 +49,9 @@ export class CompaniesController {
 
   /**
    * delete companies
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
    */
   deleteCompany = async (req: Request, res: Response): Promise<void | Company | any | ResponseRequestInterface>=> {
     try {
@@ -61,6 +67,9 @@ export class CompaniesController {
 
   /**
    * update company
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
    */
   updateCompany = async (req: Request, res: Response): Promise<void | Company | any | ResponseRequestInterface>=> {
     try {
@@ -78,11 +87,32 @@ export class CompaniesController {
 
   /**
    * list for select
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
    */
   listForSelect = async (req: Request, res: Response): Promise<void | Company | any | ResponseRequestInterface>=> {
     try {
       return await this.service.listForSelect(
         res
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
+
+  /**
+   * List metrics data
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  getMetrics = async (req: Request, res: Response): Promise<void | Company | any | ResponseRequestInterface>=> {
+    try {
+      const { id } = req.params;
+      return await this.service.getMetrics(
+        res,
+        id
       );
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);
