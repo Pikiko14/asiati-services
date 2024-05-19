@@ -27,3 +27,7 @@
 {"error":"Contraseña incorrecta","level":"error","timestamp":"2024-05-17T16:24:48.695Z"}
 {"error":"Cast to ObjectId failed for value \"/mer/i\" (type RegExp) at path \"responsable\" for model \"companies\"","level":"error","timestamp":"2024-05-17T19:14:22.196Z"}
 {"error":"Cast to ObjectId failed for value \"/Merck/i\" (type RegExp) at path \"responsable\" for model \"companies\"","level":"error","timestamp":"2024-05-17T19:15:37.791Z"}
+{"error":"Request failed with status code 401","level":"error","timestamp":"2024-05-18T15:31:00.039Z"}
+{"error":"No es posible cargar las métricas","level":"error","timestamp":"2024-05-18T15:31:00.042Z"}
+{"error":"Request failed with status code 400","level":"error","timestamp":"2024-05-18T15:36:50.160Z"}
+{"error":"No es posible cargar las métricas","level":"error","timestamp":"2024-05-18T15:36:50.162Z"}

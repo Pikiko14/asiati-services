@@ -1,4 +1,5 @@
 import { MetricsFactory } from "./metrics.factory";
+import { Company } from "../../interfaces/companies.interface";
 import { Logger, createLogger, transports, format } from "winston";
 
 /**
@@ -17,12 +18,12 @@ class MetricsService {
   /**
    * Load metrics from the external providers
    * @param type Tipo de metrica a cargar
-   * @param companyId id de la tienda a consultar
+   * @param company Compañia a consultar
    */
-  async loadMetrics(type: any, companyId: string): Promise<void> {
+  async loadMetrics(type: any, company: Company): Promise<void> {
     try {
       const metrics = MetricsFactory.createMetricsLoader(type);
-      const metricsData = await metrics.loadMetrics(companyId);
+      const metricsData = await metrics.loadMetrics(company);
       return metricsData;
     } catch (error: any) {
       this.logger.error(error.message, { error });

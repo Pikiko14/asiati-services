@@ -1,3 +1,5 @@
+import { Company } from "./companies.interface";
+
 export enum TypeMetrics {
   META = "meta",
   DROPI = "dropi",
@@ -5,5 +7,5 @@ export enum TypeMetrics {
 }
 
 export interface MetricsLoadInterface {
-  loadMetrics(companyId: string): Promise<void>;
+  loadMetrics(company: Company): Promise<void>;
 }
