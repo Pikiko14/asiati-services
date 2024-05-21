@@ -5,7 +5,6 @@ import { MetricsLoadInterface } from "../../../interfaces/metrics.interface";
 import {
   FacebookAdsApi,
   AdAccount,
-  AdsInsights,
 } from "facebook-nodejs-business-sdk";
 
 /**
@@ -65,6 +64,64 @@ export class MetaService implements MetricsLoadInterface {
         });
     } catch (error: any) {
       throw error.message;
+    }
+  }
+
+  /**
+   * List campains 
+   * @param company instancia de la compañia
+   */
+  public async listCampaings(company: Company): Promise<any> {
+    try {
+      // instanciate handler request
+      const handleRequest = new HandlerRequest(
+        this.url,
+        []
+      );
+
+      // do request
+      const campaigns = await handleRequest.doRequest(
+        `/act_${company.meta_app_identifier}/campaigns?fields=name,status,account_id&access_token=${company.meta_app_secret}`,
+        'GET',
+        {}
+      );
+      if (!campaigns.data) {
+        throw new Error("Error obteniendo el listado de campañas.");
+      }
+
+      // return data
+      return campaigns.data;
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  }
+
+  /**
+   * List ads for one campaign 
+   * @param company instancia de la compañia
+   */
+  public async listAds(company: Company, campaignId: string): Promise<any> {
+    try {
+      // instanciate handler request
+      const handleRequest = new HandlerRequest(
+        this.url,
+        []
+      );
+
+      // do request
+      const ads = await handleRequest.doRequest(
+        `/${campaignId}/ads?fields=id,name,status,creative&access_token=${company.meta_app_secret}`,
+        'GET',
+        {}
+      );
+      if (!ads.data) {
+        throw new Error("Error obteniendo el listado de campañas.");
+      }
+
+      // return data
+      return ads.data;
+    } catch (error: any) {
+      throw new Error(error.message)
     }
   }
 }

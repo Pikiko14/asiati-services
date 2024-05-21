@@ -1,17 +1,21 @@
 import { Response } from "express";
 import MetricsService from "./metrics/metrics.service";
+import { MetaService } from "./metrics/meta/meta.service";
 import { ResponseHandler } from "../utils/responseHandler";
 import { Company } from "../interfaces/companies.interface";
 import { TypeMetrics } from "../interfaces/metrics.interface";
-import { ResponseRequestInterface } from "../interfaces/response.interface";
 import CompaniesRepository from "../repositories/company.repository";
+import { ResponseRequestInterface } from "../interfaces/response.interface";
 
 /**
  * Clase encargada de enviar mensajes por correo electrónico
  */
 export class CompaniesService extends CompaniesRepository {
+  private metaService: MetaService;
+
   constructor() {
     super();
+    this.metaService = new MetaService();
   }
 
   /**
@@ -172,6 +176,70 @@ export class CompaniesService extends CompaniesRepository {
           metaMetrics
         },
         "Listado de metricas."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
+
+  /**
+   * List meta campaign
+   * @param res
+   * @param { string } id
+   */
+  public async listCampains(res: Response, id: string) {
+    try {
+      // get company
+      const company = await this.getCompanyById(id) as Company;
+      if (!company) {
+        throw new Error("No se pudo encontrar la compañia.");
+      }
+      if (!company.meta_app_secret || !company.meta_app_identifier) {
+        throw new Error("Falta el app secret o el app identificador de meta.");
+      }
+
+      // get meta metric
+      const campains = await this.metaService.listCampaings(company);
+
+      // return data
+      return ResponseHandler.createdResponse(
+        res,
+        {
+          campains
+        },
+        "Listado de campañas."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
+
+  /**
+   * List meta campaign ads
+   * @param res
+   * @param { string } id
+   */
+  public async listAds(res: Response, id: string, campaigns: string) {
+    try {
+      // get company
+      const company = await this.getCompanyById(id) as Company;
+      if (!id) {
+        throw new Error("No se pudo encontrar la compañia.");
+      }
+      if (!company.meta_app_secret || !company.meta_app_identifier) {
+        throw new Error("Falta el app secret o el app identificador de meta.");
+      }
+
+      // get meta metric
+      const ads = await this.metaService.listAds(company, campaigns);
+
+      // return data
+      return ResponseHandler.createdResponse(
+        res,
+        {
+          ads
+        },
+        "Listado de campañas."
       );
     } catch (error: any) {
       throw error.message;

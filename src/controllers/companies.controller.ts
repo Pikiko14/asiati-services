@@ -118,4 +118,41 @@ export class CompaniesController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   }
+
+  /**
+   * List campains
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  listCampains = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      return await this.service.listCampains(
+        res,
+        id
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
+
+  /**
+   * List ads
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  listAds = async (req: Request, res: Response) => {
+    try {
+      const { id, campaigns } = req.params;
+      return await this.service.listAds(
+        res,
+        id,
+        campaigns
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
 }

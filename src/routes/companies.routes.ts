@@ -76,5 +76,27 @@ router.get(
   controller.getMetrics
 )
 
+/**
+ * List campains for one store
+ */
+router.get(
+  '/:id/campaings',
+  CompanyIdValidator,
+  sessionCheck,
+  perMissionMiddleware("list-meta-metric"),
+  controller.listCampains
+)
+
+/**
+ * List ads for one campaign in one store
+ */
+router.get(
+  '/:id/:campaigns/ads',
+  CompanyIdValidator,
+  sessionCheck,
+  perMissionMiddleware("list-meta-metric"),
+  controller.listAds
+)
+
 // export router
 export { router };
