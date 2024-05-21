@@ -69,7 +69,7 @@ router.get(
  * List metrics for one store
  */
 router.get(
-  '/:id/metrics',
+  '/:id/:modelId/metrics',
   CompanyIdValidator,
   sessionCheck,
   perMissionMiddleware("list-meta-metric"),

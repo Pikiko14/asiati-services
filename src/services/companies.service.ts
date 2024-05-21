@@ -155,11 +155,11 @@ export class CompaniesService extends CompaniesRepository {
    * @param res
    * @param { string } id
    */
-  public async getMetrics(res: Response, id: string): Promise<Company | void | null | ResponseRequestInterface> {
+  public async getMetrics(res: Response, id: string, modelId: string): Promise<Company | void | null | ResponseRequestInterface> {
     try {
       // get company
       const company = await this.getCompanyById(id) as Company;
-      if (!company) {
+      if (!id) {
         throw new Error("No se pudo encontrar la compañia.");
       }
       if (!company.meta_app_secret || !company.meta_app_identifier) {
@@ -167,15 +167,15 @@ export class CompaniesService extends CompaniesRepository {
       }
 
       // get meta metric
-      const metaMetrics = await MetricsService.loadMetrics(TypeMetrics.META, company);
+      const ads = await this.metaService.getMetrics(company, modelId);
 
       // return data
       return ResponseHandler.createdResponse(
         res,
         {
-          metaMetrics
+          ads
         },
-        "Listado de metricas."
+        "Listado de campañas."
       );
     } catch (error: any) {
       throw error.message;
