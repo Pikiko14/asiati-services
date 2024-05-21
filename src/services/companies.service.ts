@@ -154,6 +154,7 @@ export class CompaniesService extends CompaniesRepository {
    * List meta data from company
    * @param res
    * @param { string } id
+   * @param modelId id del modelo a filtrar en metricas
    */
   public async getMetrics(res: Response, id: string, modelId: string): Promise<Company | void | null | ResponseRequestInterface> {
     try {
@@ -167,15 +168,15 @@ export class CompaniesService extends CompaniesRepository {
       }
 
       // get meta metric
-      const ads = await this.metaService.getMetrics(company, modelId);
+      const metrics = await this.metaService.getMetrics(company, modelId);
 
       // return data
       return ResponseHandler.createdResponse(
         res,
         {
-          ads
+          metrics
         },
-        "Listado de campañas."
+        "Listado de metricas."
       );
     } catch (error: any) {
       throw error.message;
@@ -218,6 +219,7 @@ export class CompaniesService extends CompaniesRepository {
    * List meta campaign ads
    * @param res
    * @param { string } id
+   * @param campaigns Id de campaña
    */
   public async listAds(res: Response, id: string, campaigns: string) {
     try {
@@ -239,7 +241,7 @@ export class CompaniesService extends CompaniesRepository {
         {
           ads
         },
-        "Listado de campañas."
+        "Listado de anuncios."
       );
     } catch (error: any) {
       throw error.message;
