@@ -97,7 +97,7 @@ export class MetaService implements MetricsLoadInterface {
    * @param company instancia de la compañia
    * @param modelId Id del modelo a filtrar
    */
-   public async getMetrics(company: Company, modelId: string): Promise<any> {
+   public async getMetrics(company: Company, modelId: string, from: string, to: string): Promise<any> {
     try {
       // instanciate handler request
       const handleRequest = new HandlerRequest(
@@ -106,8 +106,9 @@ export class MetaService implements MetricsLoadInterface {
       );
 
       // do request
+      console.log(from, to);
       const metrics = await handleRequest.doRequest(
-        `/${modelId}/insights?fields=impressions,spend,dda_results,cost_per_conversion,conversions,conversion_values,conversion_rate_ranking,clicks,action_values,actions&access_token=${company.meta_app_secret}`,
+        `/${modelId}/insights?fields=impressions,spend,dda_results,cost_per_conversion,conversions,conversion_values,conversion_rate_ranking,clicks,action_values,actions&time_range={'since':'${from}','until':'${to}'}&access_token=${company.meta_app_secret}`,
         'GET',
         {}
       );

@@ -156,7 +156,7 @@ export class CompaniesService extends CompaniesRepository {
    * @param { string } id
    * @param modelId id del modelo a filtrar en metricas
    */
-  public async getMetrics(res: Response, id: string, modelId: string): Promise<Company | void | null | ResponseRequestInterface> {
+  public async getMetrics(res: Response, id: string, modelId: string, from: string, to: string): Promise<Company | void | null | ResponseRequestInterface> {
     try {
       // get company
       const company = await this.getCompanyById(id) as Company;
@@ -168,7 +168,7 @@ export class CompaniesService extends CompaniesRepository {
       }
 
       // get meta metric
-      const metrics = await this.metaService.getMetrics(company, modelId);
+      const metrics = await this.metaService.getMetrics(company, modelId, from, to);
 
       // return data
       return ResponseHandler.createdResponse(

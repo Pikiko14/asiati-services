@@ -110,10 +110,13 @@ export class CompaniesController {
   getMetrics = async (req: Request, res: Response): Promise<void | Company | any | ResponseRequestInterface>=> {
     try {
       const { id, modelId } = req.params;
+      const { from, to } = req.query;
       return await this.service.getMetrics(
         res,
         id,
-        modelId
+        modelId,
+        String(from),
+        String(to)
       );
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);
