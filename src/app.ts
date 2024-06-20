@@ -46,6 +46,7 @@ export class Server {
     };
     this.app.use(cors(corsOptions));
     this.app.use(express.json());
+    this.app.set('trust proxy', 1);
     this.app.use(rateLimiter);
     this.loadRoutes();
   }
