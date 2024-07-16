@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 
+export enum TypeOrder {
+    DROPI = "dropi",
+}
+
 export interface OrdersInterface {
     id?: string | mongoose.Schema.Types.ObjectId;
     _id: string | mongoose.Schema.Types.ObjectId;
@@ -18,4 +22,5 @@ export interface OrdersInterface {
     return_freight_cost?: string | number;
     products: string;
     quantity: number;
+    type_order: TypeOrder,
 }
