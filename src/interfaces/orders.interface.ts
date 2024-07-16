@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export enum TypeOrder {
-    DROPI = "dropi",
+    DROPI = "Dropi",
 }
 
 export interface OrdersInterface {
