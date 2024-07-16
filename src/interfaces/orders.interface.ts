@@ -6,12 +6,12 @@ export enum TypeOrder {
 
 export interface OrdersInterface {
     id?: string | mongoose.Schema.Types.ObjectId;
-    _id: string | mongoose.Schema.Types.ObjectId;
+    _id?: string | mongoose.Schema.Types.ObjectId;
     external_id: string | number;
     date_order: string | Date;
     phone: string | number;
-    guide_number?: number;
-    guide_status?: string;
+    guide_number?: number | string;
+    guide_status?: string | string;
     province: string;
     city: string;
     order_notes?: string;
@@ -22,5 +22,6 @@ export interface OrdersInterface {
     return_freight_cost?: string | number;
     products: string;
     quantity: number;
-    type_order: TypeOrder,
+    type_order: TypeOrder;
+    company_id: string | mongoose.Schema.Types.ObjectId;
 }

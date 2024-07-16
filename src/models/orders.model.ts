@@ -1,5 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
-import { OrdersInterface } from "../interfaces/orders.interface";
+import { OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
 
 const OrdersSchema = new Schema<OrdersInterface>(
     {
@@ -19,7 +19,7 @@ const OrdersSchema = new Schema<OrdersInterface>(
             default: ''
         },
         guide_number: {
-            type: Number,
+            type: String,
             required: false,
             default: ''
         },
@@ -77,6 +77,16 @@ const OrdersSchema = new Schema<OrdersInterface>(
             type: Number,
             required: true,
             default: 0
+        },
+        type_order: {
+            type: String,
+            required: true,
+            default: TypeOrder.DROPI
+        },
+        company_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'companies',
+            required: true
         }
     },
     {
