@@ -26,6 +26,7 @@ export class OrdersService extends OrdersRepository {
   
       let ordersBd: OrdersInterface[] = []
       if (this.ordersData.length > 0) {
+        console.log(this.ordersData.length);
         ordersBd = await this.insertMany(this.ordersData);
         this.ordersData = [];
       }
@@ -47,26 +48,29 @@ export class OrdersService extends OrdersRepository {
    */
   private async processFile(buffer: Buffer, typeOrder: TypeOrder, companyId: string) {
     try {
-      // Process file using xlsx
-      const workbook = xlsx.read(buffer, { type: "buffer" });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const jsonData = xlsx.utils.sheet_to_json(sheet, { raw: false });
+      return new Promise(async (resolve, reject) => {
+        // Process file using xlsx
+        const workbook = xlsx.read(buffer, { type: "buffer" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = xlsx.utils.sheet_to_json(sheet, { raw: false });
 
-      // Convert date serial numbers to actual dates
-      const processedData = jsonData.map((row: any) => {
-        Object.keys(row).forEach((key) => {
-          if (
-            typeof row[key] === "number" &&
-            key.toLowerCase().includes("fecha")
-          ) {
-            row[key] = this.excelDateToJSDate(row[key]);
-          }
+        // Convert date serial numbers to actual dates
+        const processedData = jsonData.map((row: any) => {
+          Object.keys(row).forEach((key) => {
+            if (
+              typeof row[key] === "number" &&
+              key.toLowerCase().includes("fecha")
+            ) {
+              row[key] = this.excelDateToJSDate(row[key]);
+            }
+          });
+          return row;
         });
-        return row;
-      });
-      // Save orders (you can replace this with your actual save logic)
-      this.saveOrders(processedData, typeOrder, companyId);
+        // Save orders (you can replace this with your actual save logic)
+        await this.prepareOrderData(processedData, typeOrder, companyId);
+        resolve(true);
+      })
     } catch (error: any) {
       console.error("Error processing file:", error.message);
     }
@@ -90,7 +94,7 @@ export class OrdersService extends OrdersRepository {
    * Save data on bbdd
    * @param orders
    */
-  private async saveOrders(orders: any[], typeOrder: TypeOrder, companyId: string) {
+  private async prepareOrderData(orders: any[], typeOrder: TypeOrder, companyId: string) {
     // Implement your logic to save orders
     for (const order of orders) {
       // validete isset orders
