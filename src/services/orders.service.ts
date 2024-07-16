@@ -27,6 +27,7 @@ export class OrdersService extends OrdersRepository {
       let ordersBd: OrdersInterface[] = []
       if (this.ordersData.length > 0) {
         ordersBd = await this.insertMany(this.ordersData);
+        this.ordersData = [];
       }
 
       // process response
