@@ -3,6 +3,7 @@ import { upload } from "../utils/storage";
 import sessionCheck from "../middlewares/session.middleware";
 import { OrdersController } from "../controllers/orders.controller";
 import perMissionMiddleware from "../middlewares/permission.middleware";
+import { OrdersImportValidator } from "../validators/orders.validator";
 
 const router = Router();
 const controller = new OrdersController();
@@ -13,8 +14,9 @@ const controller = new OrdersController();
 router.post(
     "/import",
     sessionCheck,
-    upload.single('file'),
     perMissionMiddleware("import-orders"),
+    upload.single('file'),
+    OrdersImportValidator,
     controller.importOrdersFromExcel
 );
 
