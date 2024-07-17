@@ -7,12 +7,14 @@ import { OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
 import { PaginationInterface, ResponseRequestInterface } from "../interfaces/response.interface";
 
 export class OrdersService extends OrdersRepository {
-  ordersData: OrdersInterface[];
   utils: Utils;
+  ordersData: OrdersInterface[];
+  ordersDataUpdate: OrdersInterface[];
 
   constructor() {
     super();
     this.ordersData = [];
+    this.ordersDataUpdate = [];
     this.utils = new Utils();
   }
 
@@ -81,7 +83,7 @@ export class OrdersService extends OrdersRepository {
         resolve(true);
       })
     } catch (error: any) {
-      console.error("Error processing file:", error.message);
+      throw new Error(error.message);
     }
   }
 
@@ -93,12 +95,6 @@ export class OrdersService extends OrdersRepository {
     return new Promise(async (resolve, reject) => {
       // Implement your logic to save orders
       for (const order of orders) {
-        // validete isset orders
-        const issetOrder = await this.getBy({ external_id: order["ID"] });
-        if (issetOrder) {
-          continue;
-        }
-
         // prepare total
         const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"].replace(/\,/g, "") : 0;
         const profit = order["GANANCIA"] ? order["GANANCIA"].replace(/\,/g, "") : 0;
@@ -125,7 +121,16 @@ export class OrdersService extends OrdersRepository {
           type_order: typeOrder ?? null,
           company: companyId
         };
-        this.ordersData.push(object);
+        // validete isset orders
+        const issetOrder = await this.getBy({ external_id: order["ID"] }) as any;
+        if (issetOrder) {
+          this.ordersDataUpdate.push(object);
+          for (const order of issetOrder) {
+            await this.update(order._id as string, object)
+          }
+        } else {
+          this.ordersData.push(object);
+        }
       }
       resolve(true);
     })

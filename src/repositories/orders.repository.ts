@@ -33,12 +33,12 @@ class OrdersRepository {
    * @param query
    */
   public async getBy(query: any) {
-    const orderDb = await this.model.findOne(query);
+    const orderDb = await this.model.find(query);
     return orderDb;
   }
 
   /**
-   * paginate Companys
+   * paginate order
    * @param page
    * @param perPage
    * @param search
@@ -56,6 +56,15 @@ class OrdersRepository {
       data: orders,
       totalItems: totalOrders
     }
+  }
+
+  /**
+   * Update orders data
+   * @param id
+   * @param body
+   */
+  public async update (id: string, body: OrdersInterface): Promise<OrdersInterface | void | null> {
+    return await this.model.findByIdAndUpdate(id, body, { new: true });
   }
 }
 
