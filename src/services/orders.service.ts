@@ -172,7 +172,10 @@ export class OrdersService extends OrdersRepository {
       // process response
       ResponseHandler.successResponse(
         res,
-        orders,
+        {
+          companies: orders.data,
+          totalItems: orders.totalItems
+        },
         "Listado de ordenes."
       );
     } catch (error: any) {

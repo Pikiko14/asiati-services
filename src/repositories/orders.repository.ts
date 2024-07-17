@@ -44,17 +44,17 @@ class OrdersRepository {
    * @param search
    */
   public async paginate (query: any, skip: number, perPage: number, search: string): Promise<PaginationInterface> {
-    const companys = await this.model.find(query)
+    const orders = await this.model.find(query)
     .skip(skip)
     .limit(perPage)
     .populate({
       path: 'company',
       select: 'id name'
     })
-    const totalCompanys = await this.model.find(query).countDocuments();
+    const totalOrders = await this.model.find(query).countDocuments();
     return {
-      data: companys,
-      totalItems: totalCompanys
+      data: orders,
+      totalItems: totalOrders
     }
   }
 }
