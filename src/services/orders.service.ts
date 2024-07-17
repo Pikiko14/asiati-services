@@ -56,6 +56,12 @@ export class OrdersService extends OrdersRepository {
         const workbook = xlsx.read(buffer, { type: "buffer" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
+        Object.keys(sheet).forEach(function(s) {
+          if(sheet[s].w) {
+              delete sheet[s].w;
+              sheet[s].z = '0';
+          }
+      });
         const jsonData = xlsx.utils.sheet_to_json(sheet, { raw: false });
 
         // Convert date serial numbers to actual dates
