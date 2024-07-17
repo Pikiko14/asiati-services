@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 import OrdersModel from "../models/orders.model";
 import { OrdersInterface } from "../interfaces/orders.interface";
+import { PaginationInterface } from "../interfaces/response.interface";
 
 class OrdersRepository {
   private readonly model: Model<OrdersInterface>;
@@ -34,6 +35,27 @@ class OrdersRepository {
   public async getBy(query: any) {
     const orderDb = await this.model.findOne(query);
     return orderDb;
+  }
+
+  /**
+   * paginate Companys
+   * @param page
+   * @param perPage
+   * @param search
+   */
+  public async paginate (query: any, skip: number, perPage: number, search: string): Promise<PaginationInterface> {
+    const companys = await this.model.find(query)
+    .skip(skip)
+    .limit(perPage)
+    .populate({
+      path: 'company',
+      select: 'id name'
+    })
+    const totalCompanys = await this.model.find(query).countDocuments();
+    return {
+      data: companys,
+      totalItems: totalCompanys
+    }
   }
 }
 

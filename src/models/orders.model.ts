@@ -83,7 +83,7 @@ const OrdersSchema = new Schema<OrdersInterface>(
             required: true,
             default: TypeOrder.DROPI
         },
-        company_id: {
+        company: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'companies',
             required: true

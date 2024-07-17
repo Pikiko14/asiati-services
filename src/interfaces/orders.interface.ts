@@ -23,5 +23,5 @@ export interface OrdersInterface {
     products: string;
     quantity: number;
     type_order: TypeOrder;
-    company_id: string | mongoose.Schema.Types.ObjectId;
+    company: string | mongoose.Schema.Types.ObjectId;
 }

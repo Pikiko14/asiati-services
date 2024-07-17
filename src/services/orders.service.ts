@@ -4,7 +4,7 @@ import { Utils } from "../utils/utils";
 import { ResponseHandler } from "../utils/responseHandler";
 import OrdersRepository from "../repositories/orders.repository";
 import { OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
-import { ResponseRequestInterface } from "../interfaces/response.interface";
+import { PaginationInterface, ResponseRequestInterface } from "../interfaces/response.interface";
 
 export class OrdersService extends OrdersRepository {
   ordersData: OrdersInterface[];
@@ -117,7 +117,7 @@ export class OrdersService extends OrdersRepository {
           products: order["PRODUCTO"] ?? null,
           quantity: order["CANTIDAD"] ?? null,
           type_order: typeOrder ?? null,
-          company_id: companyId
+          company: companyId
         };
         this.ordersData.push(object);
       }
@@ -136,12 +136,44 @@ export class OrdersService extends OrdersRepository {
     search: string
   ): Promise<void | ResponseRequestInterface> => {
     try {
+      // get pagination data
+      page = page || 1;
+      perPage = perPage || 12;
+      const skip = (page - 1) * perPage;
+
+      // init search quert
+      let query: any = {};
+      if (search) {
+        const searchRegex = new RegExp(search, 'i');
+        query = {
+          $or: [
+            { external_id: searchRegex },
+            { date_order: searchRegex },
+            { phone: searchRegex },
+            { guide_number: searchRegex },
+            { province: searchRegex },
+            { city: searchRegex },
+            { order_notes: searchRegex },
+            { order_conveyor: searchRegex },
+            { total_order: searchRegex },
+            { order_profit: searchRegex },
+            { freight_price: searchRegex },
+            { return_freight_cost: searchRegex },
+            { products: searchRegex },
+            { type_order: searchRegex },
+          ],
+        };
+      }
+
+      
+      // do query
+      const orders: PaginationInterface = await this.paginate(query, skip, perPage, search);
 
       // process response
       ResponseHandler.successResponse(
         res,
-        1,
-        "Se ha iniciado el proceso de importación de ordenes correctamente."
+        orders,
+        "Listado de ordenes."
       );
     } catch (error: any) {
       throw new Error(error.message);
