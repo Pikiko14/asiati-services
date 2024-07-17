@@ -20,5 +20,15 @@ router.post(
     controller.importOrdersFromExcel
 );
 
+/**
+ * Import orders route
+ */
+router.get(
+    "/",
+    sessionCheck,
+    perMissionMiddleware("list-orders"),
+    controller.listOrders
+);
+
 // export router
 export { router };

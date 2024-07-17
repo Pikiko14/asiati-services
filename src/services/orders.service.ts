@@ -1,15 +1,18 @@
 import * as xlsx from "xlsx";
 import { Response } from "express";
+import { Utils } from "../utils/utils";
 import { ResponseHandler } from "../utils/responseHandler";
 import OrdersRepository from "../repositories/orders.repository";
 import { OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
 
 export class OrdersService extends OrdersRepository {
   ordersData: OrdersInterface[];
+  utils: Utils;
 
   constructor() {
     super();
     this.ordersData = [];
+    this.utils = new Utils();
   }
 
   /**
@@ -26,7 +29,6 @@ export class OrdersService extends OrdersRepository {
   
       let ordersBd: OrdersInterface[] = []
       if (this.ordersData.length > 0) {
-        console.log(this.ordersData.length);
         ordersBd = await this.insertMany(this.ordersData);
         this.ordersData = [];
       }
@@ -62,7 +64,7 @@ export class OrdersService extends OrdersRepository {
               typeof row[key] === "number" &&
               key.toLowerCase().includes("fecha")
             ) {
-              row[key] = this.excelDateToJSDate(row[key]);
+              row[key] = this.utils.excelDateToJSDate(row[key]);
             }
           });
           return row;
@@ -77,59 +79,48 @@ export class OrdersService extends OrdersRepository {
   }
 
   /**
-   * Validate date
-   * @param serial
-   * @returns
-   */
-  private excelDateToJSDate(serial: number): Date {
-    const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // January 1, 1900
-    const daysSinceExcelEpoch = serial - 1; // Excel's serial date starts from 1
-    const jsDate = new Date(
-      excelEpoch.getTime() + daysSinceExcelEpoch * 24 * 60 * 60 * 1000
-    );
-    return jsDate;
-  }
-
-  /**
    * Save data on bbdd
    * @param orders
    */
   private async prepareOrderData(orders: any[], typeOrder: TypeOrder, companyId: string) {
-    // Implement your logic to save orders
-    for (const order of orders) {
-      // validete isset orders
-      const issetOrder = await this.getBy({ external_id: order["ID"] });
-      if (issetOrder) {
-        continue;
+    return new Promise(async (resolve, reject) => {
+      // Implement your logic to save orders
+      for (const order of orders) {
+        // validete isset orders
+        const issetOrder = await this.getBy({ external_id: order["ID"] });
+        if (issetOrder) {
+          continue;
+        }
+
+        // prepare total
+        const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"].replace(/\,/g, "") : 0;
+        const profit = order["GANANCIA"] ? order["GANANCIA"].replace(/\,/g, "") : 0;
+        const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"].replace(/\,/g, "") : 0;
+        const returnFreight =order["COSTO_DEVOLUCION_FLETE"] ? order["COSTO_DEVOLUCION_FLETE"].replace(/\,/g, "") : 0;
+
+        // set order object
+        const object: OrdersInterface = {
+          external_id: order["ID"],
+          date_order: order["FECHA"],
+          phone: order["TELÉFONO"],
+          guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : '-',
+          guide_status: order["ESTATUS"],
+          province: order["DEPARTAMENTO_DESTINO"],
+          city: order["CIUDAD_DESTINO"],
+          order_notes: order["NOTAS"] ?? null,
+          order_conveyor: order["TRANSPORTADORA"] ?? null,
+          total_order: parseFloat(totalOrder),
+          order_profit: parseFloat(profit ?? 0),
+          freight_price: parseFloat(freight ?? 0),
+          return_freight_cost: parseFloat(returnFreight ?? 0),
+          products: order["PRODUCTO"] ?? null,
+          quantity: order["CANTIDAD"] ?? null,
+          type_order: typeOrder ?? null,
+          company_id: companyId
+        };
+        this.ordersData.push(object);
       }
-
-      // prepare total
-      const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"].replace(/\,/g, "") : 0;
-      const profit = order["GANANCIA"] ? order["GANANCIA"].replace(/\,/g, "") : 0;
-      const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"].replace(/\,/g, "") : 0;
-      const returnFreight =order["COSTO_DEVOLUCION_FLETE"] ? order["COSTO_DEVOLUCION_FLETE"].replace(/\,/g, "") : 0;
-
-      // set order object
-      const object: OrdersInterface = {
-        external_id: order["ID"],
-        date_order: order["FECHA"],
-        phone: order["TELÉFONO"],
-        guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : '-',
-        guide_status: order["ESTATUS"],
-        province: order["DEPARTAMENTO_DESTINO"],
-        city: order["CIUDAD_DESTINO"],
-        order_notes: order["NOTAS"] ?? null,
-        order_conveyor: order["TRANSPORTADORA"] ?? null,
-        total_order: parseFloat(totalOrder),
-        order_profit: parseFloat(profit ?? 0),
-        freight_price: parseFloat(freight ?? 0),
-        return_freight_cost: parseFloat(returnFreight ?? 0),
-        products: order["PRODUCTO"] ?? null,
-        quantity: order["CANTIDAD"] ?? null,
-        type_order: typeOrder ?? null,
-        company_id: companyId
-      };
-      this.ordersData.push(object);
-    }
+      resolve(true);
+    })
   }
 }

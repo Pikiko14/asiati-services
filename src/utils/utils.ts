@@ -182,6 +182,20 @@ class Utils {
     });
     return jwt;
   };
+
+  /**
+   * Validate date
+   * @param serial
+   * @returns
+   */
+  excelDateToJSDate = async (serial: number): Promise<Date> => {
+    const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // January 1, 1900
+    const daysSinceExcelEpoch = serial - 1; // Excel's serial date starts from 1
+    const jsDate = new Date(
+      excelEpoch.getTime() + daysSinceExcelEpoch * 24 * 60 * 60 * 1000
+    );
+    return jsDate;
+  }
 }
 
 export { Utils };
