@@ -27,8 +27,8 @@ export class OrdersService extends OrdersRepository {
   public async importOrdersFromExcel(res: Response, file: any, body: any): Promise<ResponseRequestInterface | void> {
     try {
       // setImmediate(() => {
-      await this.processFile(file.buffer, body.type, body.company);
       // });
+      await this.processFile(file.buffer, body.type, body.company);
   
       let ordersBd: OrdersInterface[] = []
       if (this.ordersData.length > 0) {
@@ -43,7 +43,7 @@ export class OrdersService extends OrdersRepository {
         "Se ha iniciado el proceso de importación de ordenes correctamente."
       );
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new Error(error.message ?? error);
     }
   }
 
@@ -79,8 +79,12 @@ export class OrdersService extends OrdersRepository {
           return row;
         });
         // Save orders (you can replace this with your actual save logic)
-        await this.prepareOrderData(processedData, typeOrder, companyId);
-        resolve(true);
+        try {
+          await this.prepareOrderData(processedData, typeOrder, companyId);
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        }
       })
     } catch (error: any) {
       throw new Error(error.message);
@@ -94,7 +98,49 @@ export class OrdersService extends OrdersRepository {
   private async prepareOrderData(orders: any[], typeOrder: TypeOrder, companyId: string) {
     return new Promise(async (resolve, reject) => {
       // Implement your logic to save orders
+      let i = 2;
       for (const order of orders) {
+        // do some validations 
+        if (!order['ID']) {
+          reject(`Debes ingresar el ID en la linea ${i}`);
+        }
+
+        if (!order['FECHA']) {
+          reject(`Debes ingresar la FECHA en la linea ${i}`);
+        }
+
+        if (!order['TELÉFONO']) {
+          reject(`Debes ingresar el TELÉFONO en la linea ${i}`);
+        }
+
+        if (!order['ESTATUS']) {
+          reject(`Debes ingresar el ESTATUS en la linea ${i}`);
+        }
+
+        if (!order['DEPARTAMENTO_DESTINO']) {
+          reject(`Debes ingresar el DEPARTAMENTO_DESTINO en la linea ${i}`);
+        }
+
+        if (!order['CIUDAD_DESTINO']) {
+          reject(`Debes ingresar la CIUDAD_DESTINO en la linea ${i}`);
+        }
+
+        if (!order['TRANSPORTADORA']) {
+          reject(`Debes ingresar la TRANSPORTADORA en la linea ${i}`);
+        }
+
+        if (!order['TOTAL_DE_LA_ORDEN']) {
+          reject(`Debes ingresar el TOTAL_DE_LA_ORDEN en la linea ${i}`);
+        }
+
+        if (!order['PRODUCTO']) {
+          reject(`Debes ingresar el PRODUCTO en la linea ${i}`);
+        }
+
+        if (!order['CANTIDAD']) {
+          reject(`Debes ingresar la CANTIDAD en la linea ${i}`);
+        }
+
         // prepare total
         const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"].replace(/\,/g, "") : 0;
         const profit = order["GANANCIA"] ? order["GANANCIA"].replace(/\,/g, "") : 0;
@@ -126,11 +172,12 @@ export class OrdersService extends OrdersRepository {
         if (issetOrder) {
           this.ordersDataUpdate.push(object);
           for (const order of issetOrder) {
-            await this.update(order._id as string, object)
+            await this.update(order._id as string, object);
           }
         } else {
           this.ordersData.push(object);
         }
+        i++;
       }
       resolve(true);
     })
