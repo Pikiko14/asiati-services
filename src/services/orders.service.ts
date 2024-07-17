@@ -240,17 +240,40 @@ export class OrdersService extends OrdersRepository {
    */
   public async loadMetrics(company: string, from: string, to: string) {
     try {
+      // filter data by order and company and date from and to
       const query = {
         company,
         date_order: {}
       }
       if (from && to) {
-        query.date_order = { $gt: from, $lt: to };
+        query.date_order = { $gte: await this.utils.formatDateIso(from), $lte: await this.utils.formatDateIso(to) };
       }
-      console.log(query);
       const orders: OrdersInterface[] = await this.getBy(query);
 
-      return orders;
+      // ini calculation
+      let totalCollection = 0;
+      let ordersGenerate = 0;
+      let orderDelivered= 0;
+      const isProccesExternalId: string[] = []
+
+      for (const order of orders) {
+        // set collection
+        if (order.guide_status === 'ENTREGADO') {
+          totalCollection += parseInt(order.total_order as string);
+          orderDelivered++;
+        }
+        
+        // set total orders
+        if (!isProccesExternalId.includes(order.external_id as string)) ordersGenerate++;
+
+        isProccesExternalId.push(order.external_id as string);
+      }
+
+      return {
+        collectionDropi: totalCollection,
+        totalOrders: ordersGenerate,
+        deliveredDropiOrders: orderDelivered
+      };
     } catch (error: any) {
       throw new Error(error.message);
     }
