@@ -188,14 +188,23 @@ class Utils {
    * @param serial
    * @returns
    */
-  excelDateToJSDate = async (serial: number): Promise<Date> => {
+  excelDateToJSDate = async (serial: number): Promise<Date | string> => {
     const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // January 1, 1900
     const daysSinceExcelEpoch = serial - 1; // Excel's serial date starts from 1
     const jsDate = new Date(
       excelEpoch.getTime() + daysSinceExcelEpoch * 24 * 60 * 60 * 1000
     );
-    return jsDate;
+    const formattedDate = `${('0' + jsDate.getUTCDate()).slice(-2)}/${('0' + (jsDate.getUTCMonth() + 1)).slice(-2)}/${jsDate.getUTCFullYear()}`;
+    return formattedDate;
   }
+
+  formatDateIso = async (isoString: string) => {
+    const date = new Date(isoString);
+    const day = ('0' + date.getUTCDate()).slice(-2);
+    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+  };
 }
 
 export { Utils };

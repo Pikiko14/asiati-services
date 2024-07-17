@@ -1,9 +1,8 @@
 import { Response } from "express";
-import MetricsService from "./metrics/metrics.service";
+import { OrdersService } from "./orders.service";
 import { MetaService } from "./metrics/meta/meta.service";
 import { ResponseHandler } from "../utils/responseHandler";
 import { Company } from "../interfaces/companies.interface";
-import { TypeMetrics } from "../interfaces/metrics.interface";
 import CompaniesRepository from "../repositories/company.repository";
 import { ResponseRequestInterface } from "../interfaces/response.interface";
 
@@ -12,10 +11,12 @@ import { ResponseRequestInterface } from "../interfaces/response.interface";
  */
 export class CompaniesService extends CompaniesRepository {
   private metaService: MetaService;
+  private orderService: OrdersService;
 
   constructor() {
     super();
     this.metaService = new MetaService();
+    this.orderService = new OrdersService();
   }
 
   /**
@@ -170,11 +171,15 @@ export class CompaniesService extends CompaniesRepository {
       // get meta metric
       const metrics = await this.metaService.getMetrics(company, modelId, from, to);
 
+      // get order metric
+      const orderMetric: any = await this.orderService.loadMetrics(id, from, to);
+
       // return data
       return ResponseHandler.createdResponse(
         res,
         {
-          metrics
+          metrics,
+          orderMetric
         },
         "Listado de metricas."
       );

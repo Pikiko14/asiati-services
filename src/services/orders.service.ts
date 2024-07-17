@@ -55,7 +55,9 @@ export class OrdersService extends OrdersRepository {
     try {
       return new Promise(async (resolve, reject) => {
         // Process file using xlsx
-        const workbook = xlsx.read(buffer, { type: "buffer" });
+        const workbook = xlsx.read(buffer, { type: "buffer", cellDates: true,
+          cellNF: false,
+          cellText: false });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         Object.keys(sheet).forEach(function(s) {
@@ -64,18 +66,10 @@ export class OrdersService extends OrdersRepository {
               sheet[s].z = '0';
           }
       });
-        const jsonData = xlsx.utils.sheet_to_json(sheet, { raw: false });
+        const jsonData = xlsx.utils.sheet_to_json(sheet, { raw: true });
 
         // Convert date serial numbers to actual dates
         const processedData = jsonData.map((row: any) => {
-          Object.keys(row).forEach((key) => {
-            if (
-              typeof row[key] === "number" &&
-              key.toLowerCase().includes("fecha")
-            ) {
-              row[key] = this.utils.excelDateToJSDate(row[key]);
-            }
-          });
           return row;
         });
         // Save orders (you can replace this with your actual save logic)
@@ -142,15 +136,15 @@ export class OrdersService extends OrdersRepository {
         }
 
         // prepare total
-        const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"].replace(/\,/g, "") : 0;
-        const profit = order["GANANCIA"] ? order["GANANCIA"].replace(/\,/g, "") : 0;
-        const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"].replace(/\,/g, "") : 0;
-        const returnFreight =order["COSTO_DEVOLUCION_FLETE"] ? order["COSTO_DEVOLUCION_FLETE"].replace(/\,/g, "") : 0;
+        const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"] : 0;
+        const profit = order["GANANCIA"] ? order["GANANCIA"] : 0;
+        const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"] : 0;
+        const returnFreight =order["COSTO_DEVOLUCION_FLETE"] ? order["COSTO_DEVOLUCION_FLETE"] : 0;
 
         // set order object
         const object: OrdersInterface = {
           external_id: order["ID"],
-          date_order: order["FECHA"],
+          date_order: await this.utils.formatDateIso(order["FECHA"]),
           phone: order["TELÉFONO"],
           guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : '-',
           guide_status: order["ESTATUS"],
@@ -169,8 +163,7 @@ export class OrdersService extends OrdersRepository {
         };
         // validete isset orders
         const issetOrder = await this.getBy({ external_id: order["ID"] }) as any;
-        if (issetOrder) {
-          this.ordersDataUpdate.push(object);
+        if (issetOrder && issetOrder.length > 0) {
           for (const order of issetOrder) {
             await this.update(order._id as string, object);
           }
@@ -187,12 +180,12 @@ export class OrdersService extends OrdersRepository {
    * liat orders
    * @param res Express res
    */
-  listOrders = async (
+  public async listOrders (
     res: Response,
     page: number,
     perPage: number,
     search: string
-  ): Promise<void | ResponseRequestInterface> => {
+  ): Promise<void | ResponseRequestInterface> {
     try {
       // get pagination data
       page = page || 1;
@@ -236,6 +229,28 @@ export class OrdersService extends OrdersRepository {
         },
         "Listado de ordenes."
       );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  /**
+   * list order metric
+   * @param { string } company
+   */
+  public async loadMetrics(company: string, from: string, to: string) {
+    try {
+      const query = {
+        company,
+        date_order: {}
+      }
+      if (from && to) {
+        query.date_order = { $gt: from, $lt: to };
+      }
+      console.log(query);
+      const orders: OrdersInterface[] = await this.getBy(query);
+
+      return orders;
     } catch (error: any) {
       throw new Error(error.message);
     }
