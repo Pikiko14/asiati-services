@@ -30,7 +30,8 @@ export class OrdersController {
    */
   listOrders = async (req: Request, res: Response): Promise<void | ResponseRequestInterface> => {
     try {
-      await this.service.importOrdersFromExcel(res, req.file, req.body);
+      const { page, perPage, search } = req.query as any; // get pagination data
+      await this.service.listOrders(res, page, perPage, search);
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);
     }

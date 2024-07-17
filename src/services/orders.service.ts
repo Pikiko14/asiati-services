@@ -4,6 +4,7 @@ import { Utils } from "../utils/utils";
 import { ResponseHandler } from "../utils/responseHandler";
 import OrdersRepository from "../repositories/orders.repository";
 import { OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
+import { ResponseRequestInterface } from "../interfaces/response.interface";
 
 export class OrdersService extends OrdersRepository {
   ordersData: OrdersInterface[];
@@ -21,7 +22,7 @@ export class OrdersService extends OrdersRepository {
    * @param { Response } res
    * @param file
    */
-  public async importOrdersFromExcel(res: Response, file: any, body: any) {
+  public async importOrdersFromExcel(res: Response, file: any, body: any): Promise<ResponseRequestInterface | void> {
     try {
       // setImmediate(() => {
       await this.processFile(file.buffer, body.type, body.company);
@@ -122,5 +123,28 @@ export class OrdersService extends OrdersRepository {
       }
       resolve(true);
     })
+  }
+
+  /**
+   * liat orders
+   * @param res Express res
+   */
+  listOrders = async (
+    res: Response,
+    page: number,
+    perPage: number,
+    search: string
+  ): Promise<void | ResponseRequestInterface> => {
+    try {
+
+      // process response
+      ResponseHandler.successResponse(
+        res,
+        1,
+        "Se ha iniciado el proceso de importación de ordenes correctamente."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
 }
