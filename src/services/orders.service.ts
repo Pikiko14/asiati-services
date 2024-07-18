@@ -251,28 +251,58 @@ export class OrdersService extends OrdersRepository {
       const orders: OrdersInterface[] = await this.getBy(query);
 
       // ini calculation
-      let totalCollection = 0;
-      let ordersGenerate = 0;
-      let orderDelivered= 0;
+      let totalCancelDropi = 0;
+      let totalRejectedDropi = 0;
+      let ordersPendingDropi = 0;
+      let orderDeliveredDropi= 0;
+      let ordersGenerateDropi = 0;
+      let ordersReturnedDropi = 0;
+      let totalCollectionDropi = 0;
+      let ordersPendingConfirmationDropi = 0;
+
       const isProccesExternalId: string[] = []
 
       for (const order of orders) {
-        // set collection
-        if (order.guide_status === 'ENTREGADO') {
-          totalCollection += parseInt(order.total_order as string);
-          orderDelivered++;
+        // validate if is in array
+        const isInArray = isProccesExternalId.includes(order.external_id as string);
+
+        // set collection and total deliverid
+        if (!isInArray && order.guide_status === 'ENTREGADO') {
+          totalCollectionDropi += parseInt(order.total_order as string);
+          orderDeliveredDropi++;
         }
+
+        // set count of devolution orders
+        if (!isInArray && order.guide_status === 'DEVOLUCION') ordersReturnedDropi++;
+
+        // set count of pending orders
+        if (!isInArray && order.guide_status === 'PENDIENTE') ordersPendingDropi++;
+
+        // set count of pending confirmation orders
+        if (!isInArray && order.guide_status === 'PENDIENTE CONFIRMACION') ordersPendingConfirmationDropi++;
         
+        // set count of calcelled confirmation orders
+        if (!isInArray && order.guide_status === 'CANCELADO') totalCancelDropi++;
+
+        // set count of calcelled confirmation orders
+        if (!isInArray && order.guide_status === 'RECHAZADO') totalRejectedDropi++;
+
         // set total orders
-        if (!isProccesExternalId.includes(order.external_id as string)) ordersGenerate++;
+        if (!isInArray) ordersGenerateDropi++;
 
         isProccesExternalId.push(order.external_id as string);
       }
 
       return {
-        collectionDropi: totalCollection,
-        totalOrders: ordersGenerate,
-        deliveredDropiOrders: orderDelivered
+        cancelledDropi: totalCancelDropi,
+        rejectedDropi: totalRejectedDropi,
+        collectionDropi: totalCollectionDropi,
+        totalDropiOrders: ordersGenerateDropi,
+        pendingDropiOrders: ordersPendingDropi,
+        returnedDropiOrders: ordersReturnedDropi,
+        deliveredDropiOrders: orderDeliveredDropi,
+        pendingConfirmationDropiOrders: ordersPendingConfirmationDropi,
+        cancelledAndRejectedOrders: totalCancelDropi + totalRejectedDropi,
       };
     } catch (error: any) {
       throw new Error(error.message);
