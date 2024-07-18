@@ -51,6 +51,11 @@ export class MetaService implements MetricsLoadInterface {
         'GET',
         {}
       );
+
+      if (campaigns.error && campaigns.error.message) {
+        throw new Error(campaigns.error.message);
+      }
+
       if (!campaigns.data) {
         throw new Error("Error obteniendo el listado de campañas.");
       }
@@ -111,10 +116,10 @@ export class MetaService implements MetricsLoadInterface {
         'GET',
         {}
       );
+
       if (!metrics.data) {
         throw new Error("Error obteniendo el listado de campañas.");
       }
-
       // return data
       return metrics.data;
     } catch (error: any) {

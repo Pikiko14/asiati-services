@@ -251,6 +251,8 @@ export class OrdersService extends OrdersRepository {
       const orders: OrdersInterface[] = await this.getBy(query);
 
       // ini calculation
+      let totalFreight = 0;
+      let totalOrderDropi = 0;
       let totalCancelDropi = 0;
       let totalRejectedDropi = 0;
       let ordersPendingDropi = 0;
@@ -258,6 +260,8 @@ export class OrdersService extends OrdersRepository {
       let ordersGenerateDropi = 0;
       let ordersReturnedDropi = 0;
       let totalCollectionDropi = 0;
+      let totalFreightDelivered = 0;
+      let totalOrdersDeliveredDropi = 0;
       let ordersPendingConfirmationDropi = 0;
 
       const isProccesExternalId: string[] = []
@@ -270,6 +274,8 @@ export class OrdersService extends OrdersRepository {
         if (!isInArray && order.guide_status === 'ENTREGADO') {
           totalCollectionDropi += parseInt(order.total_order as string);
           orderDeliveredDropi++;
+          totalOrdersDeliveredDropi+= parseInt(order.total_order as string);
+          totalFreightDelivered+= parseInt(order.freight_price as string);
         }
 
         // set count of devolution orders
@@ -287,20 +293,30 @@ export class OrdersService extends OrdersRepository {
         // set count of calcelled confirmation orders
         if (!isInArray && order.guide_status === 'RECHAZADO') totalRejectedDropi++;
 
+        // set count total orders
+        if (!isInArray) {
+          ordersGenerateDropi++;
+        }
+
         // set total orders
-        if (!isInArray) ordersGenerateDropi++;
+        totalFreight+= parseInt(order.freight_price as string);
+        totalOrderDropi += parseInt(order.total_order as string);
 
         isProccesExternalId.push(order.external_id as string);
       }
 
       return {
+        totalFreight: totalFreight,
         cancelledDropi: totalCancelDropi,
         rejectedDropi: totalRejectedDropi,
+        totalMoneyInDropi: totalOrderDropi,
         collectionDropi: totalCollectionDropi,
         totalDropiOrders: ordersGenerateDropi,
         pendingDropiOrders: ordersPendingDropi,
         returnedDropiOrders: ordersReturnedDropi,
         deliveredDropiOrders: orderDeliveredDropi,
+        totalFreightDelivered: totalFreightDelivered,
+        totalOrdersDropiDelivered: totalOrdersDeliveredDropi,
         pendingConfirmationDropiOrders: ordersPendingConfirmationDropi,
         cancelledAndRejectedOrders: totalCancelDropi + totalRejectedDropi,
       };
