@@ -51,6 +51,11 @@ export class MetaService implements MetricsLoadInterface {
         'GET',
         {}
       );
+
+      if (campaigns.error && campaigns.error.message) {
+        throw new Error(campaigns.error.message);
+      }
+
       if (!campaigns.data) {
         throw new Error("Error obteniendo el listado de campañas.");
       }
@@ -106,16 +111,15 @@ export class MetaService implements MetricsLoadInterface {
       );
 
       // do request
-      console.log(from, to);
       const metrics = await handleRequest.doRequest(
         `/${modelId}/insights?fields=impressions,spend,dda_results,cost_per_conversion,conversions,conversion_values,conversion_rate_ranking,clicks,action_values,actions&time_range={'since':'${from}','until':'${to}'}&access_token=${company.meta_app_secret}`,
         'GET',
         {}
       );
+
       if (!metrics.data) {
         throw new Error("Error obteniendo el listado de campañas.");
       }
-
       // return data
       return metrics.data;
     } catch (error: any) {

@@ -8,7 +8,7 @@ const repository = new UserRepository();
 
 // id validator
 const UserIdValidator = [
-  check("_id")
+  check("id")
     .notEmpty()
     .withMessage("Debes especificar el usuario a editar")
     .isString()

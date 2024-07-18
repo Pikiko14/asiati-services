@@ -99,33 +99,9 @@ class Utils {
    * @param {string} path
    */
   getPath = async (path: string): Promise<string | undefined> => {
-    if (path.includes("catalogues")) {
-      await this.validateOrGeneratePath("catalogues");
-      return "catalogues";
-    }
-    if (path.includes("pdf")) {
-      await this.validateOrGeneratePath("pdfs");
-      return "pdfs";
-    }
-    if (path.includes("images")) {
-      await this.validateOrGeneratePath(path);
-      return path;
-    }
-    if (path.includes("pages")) {
-      await this.validateOrGeneratePath("images");
-      return "images";
-    }
-    if (path.includes("profile")) {
-      await this.validateOrGeneratePath("profile");
-      return "profile";
-    }
-    if (path.includes("products")) {
-      await this.validateOrGeneratePath("products");
-      return "products";
-    }
-    if (path.includes("categories")) {
-      await this.validateOrGeneratePath("categories");
-      return "categories";
+    if (path.includes("orders")) {
+      await this.validateOrGeneratePath("orders");
+      return "orders";
     }
     return undefined;
   };
@@ -205,6 +181,29 @@ class Utils {
       expiresIn: "30m",
     });
     return jwt;
+  };
+
+  /**
+   * Validate date
+   * @param serial
+   * @returns
+   */
+  excelDateToJSDate = async (serial: number): Promise<Date | string> => {
+    const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // January 1, 1900
+    const daysSinceExcelEpoch = serial - 1; // Excel's serial date starts from 1
+    const jsDate = new Date(
+      excelEpoch.getTime() + daysSinceExcelEpoch * 24 * 60 * 60 * 1000
+    );
+    const formattedDate = `${('0' + jsDate.getUTCDate()).slice(-2)}/${('0' + (jsDate.getUTCMonth() + 1)).slice(-2)}/${jsDate.getUTCFullYear()}`;
+    return formattedDate;
+  }
+
+  formatDateIso = async (isoString: string) => {
+    const date = new Date(isoString);
+    const day = ('0' + date.getUTCDate()).slice(-2);
+    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
   };
 }
 

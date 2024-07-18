@@ -150,7 +150,6 @@ class UserService extends UserRepository {
       } else if ('password' in body) {
         delete body.password;
       }
-      console.log(body);
       const user = await this.update(id, body);
       return ResponseHandler.createdResponse(
         res,
