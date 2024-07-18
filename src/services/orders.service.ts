@@ -252,6 +252,7 @@ export class OrdersService extends OrdersRepository {
 
       // ini calculation
       let totalFreight = 0;
+      let returnedFreight = 0;
       let totalOrderDropi = 0;
       let totalCancelDropi = 0;
       let totalRejectedDropi = 0;
@@ -279,7 +280,14 @@ export class OrdersService extends OrdersRepository {
         }
 
         // set count of devolution orders
-        if (!isInArray && order.guide_status === 'DEVOLUCION') ordersReturnedDropi++;
+        if (!isInArray && order.guide_status === 'DEVOLUCION') {
+          ordersReturnedDropi++;
+        }
+
+        // get freight from order in devolution
+        if(order.guide_status === 'DEVOLUCION') {
+          returnedFreight+= parseInt(order.freight_price as string);
+        }
 
         // set count of pending orders
         if (!isInArray && order.guide_status === 'PENDIENTE') ordersPendingDropi++;
@@ -307,6 +315,7 @@ export class OrdersService extends OrdersRepository {
 
       return {
         totalFreight: totalFreight,
+        returnedFreightDropi: returnedFreight,
         cancelledDropi: totalCancelDropi,
         rejectedDropi: totalRejectedDropi,
         totalMoneyInDropi: totalOrderDropi,
