@@ -32,7 +32,9 @@ class AuthService extends users_repository_1.default {
             'list-business',
             'edit-business',
             'delete-business',
-            'list-meta-metric'
+            'list-meta-metric',
+            'list-orders',
+            'import-orders'
         ];
         this.emailSender = new email_service_1.EmailSenderService();
     }

@@ -109,33 +109,9 @@ class Utils {
          * @param {string} path
          */
         this.getPath = (path) => __awaiter(this, void 0, void 0, function* () {
-            if (path.includes("catalogues")) {
-                yield this.validateOrGeneratePath("catalogues");
-                return "catalogues";
-            }
-            if (path.includes("pdf")) {
-                yield this.validateOrGeneratePath("pdfs");
-                return "pdfs";
-            }
-            if (path.includes("images")) {
-                yield this.validateOrGeneratePath(path);
-                return path;
-            }
-            if (path.includes("pages")) {
-                yield this.validateOrGeneratePath("images");
-                return "images";
-            }
-            if (path.includes("profile")) {
-                yield this.validateOrGeneratePath("profile");
-                return "profile";
-            }
-            if (path.includes("products")) {
-                yield this.validateOrGeneratePath("products");
-                return "products";
-            }
-            if (path.includes("categories")) {
-                yield this.validateOrGeneratePath("categories");
-                return "categories";
+            if (path.includes("orders")) {
+                yield this.validateOrGeneratePath("orders");
+                return "orders";
             }
             return undefined;
         });
@@ -208,6 +184,25 @@ class Utils {
                 expiresIn: "30m",
             });
             return jwt;
+        });
+        /**
+         * Validate date
+         * @param serial
+         * @returns
+         */
+        this.excelDateToJSDate = (serial) => __awaiter(this, void 0, void 0, function* () {
+            const excelEpoch = new Date(Date.UTC(1900, 0, 1)); // January 1, 1900
+            const daysSinceExcelEpoch = serial - 1; // Excel's serial date starts from 1
+            const jsDate = new Date(excelEpoch.getTime() + daysSinceExcelEpoch * 24 * 60 * 60 * 1000);
+            const formattedDate = `${('0' + jsDate.getUTCDate()).slice(-2)}/${('0' + (jsDate.getUTCMonth() + 1)).slice(-2)}/${jsDate.getUTCFullYear()}`;
+            return formattedDate;
+        });
+        this.formatDateIso = (isoString) => __awaiter(this, void 0, void 0, function* () {
+            const date = new Date(isoString);
+            const day = ('0' + date.getUTCDate()).slice(-2);
+            const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
         });
         this.JWT_SECRET = configuration_1.default.get("JWT_SECRET") || "";
         this.salt = 10;

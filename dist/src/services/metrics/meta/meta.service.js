@@ -51,6 +51,9 @@ class MetaService {
                 const handleRequest = new handler_request_1.HandlerRequest(this.url, []);
                 // do request
                 const campaigns = yield handleRequest.doRequest(`/act_${company.meta_app_identifier}/campaigns?fields=name,status,account_id&access_token=${company.meta_app_secret}`, 'GET', {});
+                if (campaigns.error && campaigns.error.message) {
+                    throw new Error(campaigns.error.message);
+                }
                 if (!campaigns.data) {
                     throw new Error("Error obteniendo el listado de campañas.");
                 }
@@ -96,7 +99,6 @@ class MetaService {
                 // instanciate handler request
                 const handleRequest = new handler_request_1.HandlerRequest(this.url, []);
                 // do request
-                console.log(from, to);
                 const metrics = yield handleRequest.doRequest(`/${modelId}/insights?fields=impressions,spend,dda_results,cost_per_conversion,conversions,conversion_values,conversion_rate_ranking,clicks,action_values,actions&time_range={'since':'${from}','until':'${to}'}&access_token=${company.meta_app_secret}`, 'GET', {});
                 if (!metrics.data) {
                     throw new Error("Error obteniendo el listado de campañas.");

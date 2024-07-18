@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompaniesService = void 0;
+const orders_service_1 = require("./orders.service");
 const meta_service_1 = require("./metrics/meta/meta.service");
 const responseHandler_1 = require("../utils/responseHandler");
 const company_repository_1 = __importDefault(require("../repositories/company.repository"));
@@ -23,6 +24,7 @@ class CompaniesService extends company_repository_1.default {
     constructor() {
         super();
         this.metaService = new meta_service_1.MetaService();
+        this.orderService = new orders_service_1.OrdersService();
     }
     /**
      * create company
@@ -156,9 +158,12 @@ class CompaniesService extends company_repository_1.default {
                 }
                 // get meta metric
                 const metrics = yield this.metaService.getMetrics(company, modelId, from, to);
+                // get order metric
+                const orderMetric = yield this.orderService.loadMetrics(id, from, to);
                 // return data
                 return responseHandler_1.ResponseHandler.createdResponse(res, {
-                    metrics
+                    metrics,
+                    orderMetric
                 }, "Listado de metricas.");
             }
             catch (error) {

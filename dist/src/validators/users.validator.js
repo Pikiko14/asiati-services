@@ -20,7 +20,7 @@ const handler_validator_1 = require("../utils/handler.validator");
 const repository = new users_repository_1.default();
 // id validator
 const UserIdValidator = [
-    (0, express_validator_1.check)("_id")
+    (0, express_validator_1.check)("id")
         .notEmpty()
         .withMessage("Debes especificar el usuario a editar")
         .isString()

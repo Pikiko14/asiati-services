@@ -138,7 +138,6 @@ class UserService extends users_repository_1.default {
                 else if ('password' in body) {
                     delete body.password;
                 }
-                console.log(body);
                 const user = yield this.update(id, body);
                 return responseHandler_1.ResponseHandler.createdResponse(res, user, "Usuario actualizado correctamente.");
             }

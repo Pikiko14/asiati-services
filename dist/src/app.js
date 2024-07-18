@@ -44,13 +44,14 @@ class Server {
      */
     configureMiddleware() {
         const corsOptions = {
-            origin: ['http://localhost:9000'],
+            origin: ['http://localhost:9000', 'https://financiero.asiaticorp.com'],
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
             credentials: true,
             optionsSuccessStatus: 204,
         };
         this.app.use((0, cors_1.default)(corsOptions));
         this.app.use(express_1.default.json());
+        this.app.set('trust proxy', 1);
         this.app.use(rateLimiter_1.rateLimiter);
         this.loadRoutes();
     }
