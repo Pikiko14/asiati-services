@@ -285,34 +285,36 @@ export class OrdersService extends OrdersRepository {
         const isInArray = isProccesExternalId.includes(order.external_id as string);
 
         // set collection and total deliverid
-        if (!isInArray && order.guide_status === 'ENTREGADO') {
+        if (!isInArray && order.guide_status?.toUpperCase() === 'ENTREGADO') {
           totalCollectionDropi += parseInt(order.total_order as string);
           orderDeliveredDropi++;
           totalOrdersDeliveredDropi+= parseInt(order.total_order as string);
-          totalFreightDelivered+= parseInt(order.freight_price as string);
         }
 
+        // sum freight of all orders delivered
+        if (order.guide_status?.toUpperCase() === 'ENTREGADO') totalFreightDelivered+= parseInt(order.freight_price as string);
+
         // set count of devolution orders
-        if (!isInArray && order.guide_status === 'DEVOLUCION') {
+        if (!isInArray && order.guide_status?.toUpperCase() === 'DEVOLUCION') {
           ordersReturnedDropi++;
         }
 
         // get freight from order in devolution
-        if(order.guide_status === 'DEVOLUCION') {
+        if(order.guide_status?.toUpperCase() === 'DEVOLUCION') {
           returnedFreight+= parseInt(order.freight_price as string);
         }
 
         // set count of pending orders
-        if (!isInArray && order.guide_status === 'PENDIENTE') ordersPendingDropi++;
+        if (!isInArray && order.guide_status?.toUpperCase() === 'PENDIENTE') ordersPendingDropi++;
 
         // set count of pending confirmation orders
-        if (!isInArray && order.guide_status === 'PENDIENTE CONFIRMACION') ordersPendingConfirmationDropi++;
+        if (!isInArray && order.guide_status?.toUpperCase() === 'PENDIENTE CONFIRMACION') ordersPendingConfirmationDropi++;
         
         // set count of calcelled confirmation orders
-        if (!isInArray && order.guide_status === 'CANCELADO') totalCancelDropi++;
+        if (!isInArray && order.guide_status?.toUpperCase() === 'CANCELADO') totalCancelDropi++;
 
         // set count of calcelled confirmation orders
-        if (!isInArray && order.guide_status === 'RECHAZADO') totalRejectedDropi++;
+        if (!isInArray && order.guide_status?.toUpperCase() === 'RECHAZADO') totalRejectedDropi++;
 
         if (
           order.products.includes('Bio') ||
