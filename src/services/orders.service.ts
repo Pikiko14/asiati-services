@@ -286,13 +286,15 @@ export class OrdersService extends OrdersRepository {
 
         // set collection and total deliverid
         if (!isInArray && order.guide_status?.toUpperCase() === 'ENTREGADO') {
-          totalCollectionDropi += parseInt(order.total_order as string);
           orderDeliveredDropi++;
-          totalOrdersDeliveredDropi+= parseInt(order.total_order as string);
         }
 
         // sum freight of all orders delivered
-        if (order.guide_status?.toUpperCase() === 'ENTREGADO') totalFreightDelivered+= parseInt(order.freight_price as string);
+        if (order.guide_status?.toUpperCase() === 'ENTREGADO') {
+          totalCollectionDropi += parseInt(order.total_order as string);
+          totalFreightDelivered+= parseInt(order.freight_price as string);
+          totalOrdersDeliveredDropi+= parseInt(order.total_order as string);
+        }
 
         // set count of devolution orders
         if (!isInArray && order.guide_status?.toUpperCase() === 'DEVOLUCION') {
