@@ -321,7 +321,7 @@ export class OrdersService extends OrdersRepository {
           order.products.includes('Voltr') ||
           order.products.includes('Men')
         ) {
-          totalHealthWellbeing+= parseInt(order.freight_price as string);
+          totalHealthWellbeing+= parseInt(order.total_order as string);
         }
 
         // set count total orders
