@@ -33,7 +33,7 @@ export class OrdersService extends OrdersRepository {
       let ordersBd: OrdersInterface[] = []
       if (this.ordersData.length > 0) {
         ordersBd = await this.insertMany(this.ordersData);
-        this.ordersData = [];
+        this.clearOrdersData();
       }
 
       // process response
@@ -96,6 +96,7 @@ export class OrdersService extends OrdersRepository {
       for (const order of orders) {
         // do some validations 
         if (!order['ID']) {
+          this.clearOrdersData();
           reject(`Debes ingresar el ID en la linea ${i}`);
         }
 
@@ -104,34 +105,42 @@ export class OrdersService extends OrdersRepository {
         }
 
         if (!order['TELÉFONO']) {
+          this.clearOrdersData();
           reject(`Debes ingresar el TELÉFONO en la linea ${i}`);
         }
 
         if (!order['ESTATUS']) {
+          this.clearOrdersData();
           reject(`Debes ingresar el ESTATUS en la linea ${i}`);
         }
 
         if (!order['DEPARTAMENTO_DESTINO']) {
+          this.clearOrdersData();
           reject(`Debes ingresar el DEPARTAMENTO_DESTINO en la linea ${i}`);
         }
 
         if (!order['CIUDAD_DESTINO']) {
+          this.clearOrdersData();
           reject(`Debes ingresar la CIUDAD_DESTINO en la linea ${i}`);
         }
 
         if (!order['TRANSPORTADORA']) {
+          this.clearOrdersData();
           reject(`Debes ingresar la TRANSPORTADORA en la linea ${i}`);
         }
 
         if (!order['TOTAL_DE_LA_ORDEN']) {
+          this.clearOrdersData();
           reject(`Debes ingresar el TOTAL_DE_LA_ORDEN en la linea ${i}`);
         }
 
         if (!order['PRODUCTO']) {
+          this.clearOrdersData();
           reject(`Debes ingresar el PRODUCTO en la linea ${i}`);
         }
 
         if (!order['CANTIDAD']) {
+          this.clearOrdersData();
           reject(`Debes ingresar la CANTIDAD en la linea ${i}`);
         }
 
@@ -143,7 +152,7 @@ export class OrdersService extends OrdersRepository {
 
         // set order object
         const object: OrdersInterface = {
-          external_id: order["ID"],
+          external_id: order["ID"] ?? order['id'],
           date_order: await this.utils.formatDateIso(order["FECHA"]),
           phone: order["TELÉFONO"],
           guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : '-',
@@ -332,5 +341,12 @@ export class OrdersService extends OrdersRepository {
     } catch (error: any) {
       throw new Error(error.message);
     }
+  }
+
+  /**
+   * clear order data
+   */
+  public clearOrdersData() {
+    this.ordersData = [];
   }
 }
