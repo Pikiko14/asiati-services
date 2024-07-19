@@ -3,7 +3,7 @@ import { Response } from "express";
 import { Utils } from "../utils/utils";
 import { ResponseHandler } from "../utils/responseHandler";
 import OrdersRepository from "../repositories/orders.repository";
-import { OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
+import { OrderMetricsInterface, OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
 import { PaginationInterface, ResponseRequestInterface } from "../interfaces/response.interface";
 
 export class OrdersService extends OrdersRepository {
@@ -249,7 +249,7 @@ export class OrdersService extends OrdersRepository {
    * list order metric
    * @param { string } company
    */
-  public async loadMetrics(company: string, from: string, to: string) {
+  public async loadMetrics(company: string, from: string, to: string): Promise<OrderMetricsInterface> {
     try {
       // filter data by order and company and date from and to
       const query = {
@@ -272,6 +272,7 @@ export class OrdersService extends OrdersRepository {
       let ordersGenerateDropi = 0;
       let ordersReturnedDropi = 0;
       let totalCollectionDropi = 0;
+      let totalHealthWellbeing = 0;
       let totalFreightDelivered = 0;
       let totalOrdersDeliveredDropi = 0;
       let ordersPendingConfirmationDropi = 0;
@@ -312,6 +313,17 @@ export class OrdersService extends OrdersRepository {
         // set count of calcelled confirmation orders
         if (!isInArray && order.guide_status === 'RECHAZADO') totalRejectedDropi++;
 
+        if (
+          order.products.includes('Bio') ||
+          order.products.includes('Hot') ||
+          order.products.includes('Oxi') ||
+          order.products.includes('Tribul') ||
+          order.products.includes('Voltr') ||
+          order.products.includes('Men')
+        ) {
+          totalHealthWellbeing+= parseInt(order.freight_price as string);
+        }
+
         // set count total orders
         if (!isInArray) {
           ordersGenerateDropi++;
@@ -326,15 +338,16 @@ export class OrdersService extends OrdersRepository {
 
       return {
         totalFreight: totalFreight,
-        returnedFreightDropi: returnedFreight,
         cancelledDropi: totalCancelDropi,
         rejectedDropi: totalRejectedDropi,
         totalMoneyInDropi: totalOrderDropi,
+        returnedFreightDropi: returnedFreight,
         collectionDropi: totalCollectionDropi,
         totalDropiOrders: ordersGenerateDropi,
         pendingDropiOrders: ordersPendingDropi,
         returnedDropiOrders: ordersReturnedDropi,
         deliveredDropiOrders: orderDeliveredDropi,
+        totalHealthWellbeing: totalHealthWellbeing,
         totalFreightDelivered: totalFreightDelivered,
         totalOrdersDropiDelivered: totalOrdersDeliveredDropi,
         pendingConfirmationDropiOrders: ordersPendingConfirmationDropi,
