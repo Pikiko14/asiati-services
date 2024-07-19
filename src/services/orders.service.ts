@@ -177,7 +177,9 @@ export class OrdersService extends OrdersRepository {
             await this.update(order._id as string, object);
           }
         } else {
-          this.ordersData.push(object);
+          if (object['external_id']) {
+            this.ordersData.push(object);
+          }
         }
         i++;
       }
