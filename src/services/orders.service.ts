@@ -213,6 +213,7 @@ export class OrdersService extends OrdersRepository {
             { date_order: searchRegex },
             { phone: searchRegex },
             { guide_number: searchRegex },
+            { guide_status: searchRegex },
             { province: searchRegex },
             { city: searchRegex },
             { order_notes: searchRegex },
