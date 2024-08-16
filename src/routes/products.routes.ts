@@ -45,7 +45,7 @@ router.delete(
 router.put(
   "/:id",
   sessionCheck,
-  perMissionMiddleware("update-products"),
+  perMissionMiddleware("edit-products"),
   ProductsIdValidator,
   productsCreationValidator,
   controller.updateProducts
