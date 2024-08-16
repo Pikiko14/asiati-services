@@ -65,4 +65,24 @@ export class ProductsController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   };
+
+  /**
+   * Modificar productos
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  updateProducts = async (req: Request, res: Response): Promise<void | ProductsInterface | any | ResponseRequestInterface>=> {
+    try {
+      const { id } = req.params as any; // get id from params
+      const body = matchedData(req) as ProductsInterface;
+      return await this.service.updateProducts(
+        res,
+        id,
+        body
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  }
 }

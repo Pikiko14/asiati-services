@@ -96,10 +96,32 @@ export class ProductsService extends ProductsRepository {
   ): Promise<ProductsInterface[] | void | null | ResponseRequestInterface> {
     try {
       const user = await this.deleteProduct(id);
+
       return ResponseHandler.createdResponse(
         res,
         user,
         "Producto eliminado correctamente."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
+
+  /**
+   * Update products
+   * @param res
+   * @param { string } id
+   * @param { ProductsInterface } body
+   * @returns A Promise of 1
+   */
+  public async updateProducts(res: Response, id: string, body: ProductsInterface): Promise<ProductsInterface | void | null | ResponseRequestInterface> {
+    try {
+      const product = await this.update(id, body);
+
+      return ResponseHandler.createdResponse(
+        res,
+        product,
+        "Usuario actualizado correctamente."
       );
     } catch (error: any) {
       throw error.message;
