@@ -2,13 +2,13 @@ import { Router } from "express";
 import sessionCheck from "../middlewares/session.middleware";
 import { ProductsController } from "../controllers/products.controller";
 import perMissionMiddleware from "../middlewares/permission.middleware";
-import { productsCreationValidator } from "../validators/products.validator";
+import { productsCreationValidator, ProductsIdValidator } from "../validators/products.validator";
 
 const router = Router();
 const controller = new ProductsController();
 
 /**
- * Import orders route
+ * Create products
  */
 router.post(
   "/",
@@ -16,6 +16,27 @@ router.post(
   perMissionMiddleware("create-products"),
   productsCreationValidator,
   controller.createProducts
+);
+
+/**
+ * list products
+ */
+router.get(
+  "/",
+  sessionCheck,
+  perMissionMiddleware("list-products"),
+  controller.listProducts
+);
+
+/**
+ * Delete products
+ */
+router.delete(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("delete-products"),
+  ProductsIdValidator,
+  controller.deleteProducts
 );
 
 // export router

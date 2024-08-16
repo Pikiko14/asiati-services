@@ -1,8 +1,10 @@
 import { check } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import { handlerValidator } from "../utils/handler.validator";
+import ProductsRepository from "../repositories/products.repository";
 
 // instanciate all class neccesaries
+const repository = new ProductsRepository();
 
 const productsCreationValidator = [
   check("name")
@@ -27,9 +29,31 @@ const productsCreationValidator = [
     .notEmpty()
     .withMessage("El campo is_health_and_wellness no puede estar vacío")
     .isBoolean()
-    .withMessage("El campo is_health_and_wellness debe ser (Verdadero o Falso)"),
+    .withMessage(
+      "El campo is_health_and_wellness debe ser (Verdadero o Falso)"
+    ),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ];
 
-export { productsCreationValidator };
+// id validator
+const ProductsIdValidator = [
+  check("id")
+    .notEmpty()
+    .withMessage("Debes especificar el id producto")
+    .isString()
+    .withMessage("El id del producto debe ser un estring")
+    .isMongoId()
+    .withMessage("El id del producto debe ser un id correcto")
+    .custom(async (id: string) => {
+      const existUser = await repository.getProductById(id);
+      if (!existUser) {
+        throw new Error("El producto que intentas editar no existe");
+      }
+      return true;
+    }),
+  (req: Request, res: Response, next: NextFunction) =>
+    handlerValidator(req, res, next),
+];
+
+export { productsCreationValidator, ProductsIdValidator };

@@ -29,4 +29,40 @@ export class ProductsController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   };
+
+  /**
+   * Listar producto
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  listProducts = async (
+    req: Request,
+    res: Response
+  ): Promise<void | ProductsInterface | any | ResponseRequestInterface> => {
+    try {
+      const { page, perPage, search } = req.query as any; // get pagination data
+      return await this.service.listProducts(res, page, perPage, search);
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  };
+
+  /**
+   * Eliminar producto
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  deleteProducts = async (
+    req: Request,
+    res: Response
+  ): Promise<void | ProductsInterface | any | ResponseRequestInterface> => {
+    try {
+      const { id } = req.params as any; // get pagination data
+      return await this.service.deleteProducts(res, id);
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  };
 }

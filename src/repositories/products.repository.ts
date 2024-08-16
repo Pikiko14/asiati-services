@@ -54,15 +54,8 @@ class ProductsRepository {
    * get user by id
    * @param id
    */
-  public async getUserById(id: string): Promise<ProductsInterface | void | null> {
+  public async getProductById(id: string): Promise<ProductsInterface | void | null> {
     return this.model.findById(id);
-  }
-
-  /**
-   * Get all users for select
-   */
-  public async listSelect (): Promise<ProductsInterface[]> {
-    return await this.model.find({}).select("id name last_name");
   }
 }
 
