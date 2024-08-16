@@ -25,7 +25,11 @@ class AuthService extends UserRepository {
       'delete-business',
       'list-meta-metric',
       'list-orders',
-      'import-orders'
+      'import-orders',
+      'create-products',
+      'list-products',
+      'edit-products',
+      'delete-products',
     ];
     this.emailSender = new EmailSenderService();
   }
