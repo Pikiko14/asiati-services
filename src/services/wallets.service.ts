@@ -135,7 +135,7 @@ export class WalletsService extends WalletsRepository {
           amount: totalMovement,
           type_order: typeOrder,
           company: companyId,
-          description: order["DESCRIPCIION"] ?? null,
+          description: order["DESCRIPCIÓN"] ?? null,
           guide_number: order["NÚMERO DE GUIA"] ?? null,
           order_id: order["ORDEN ID"] ?? null,
           date: order["FECHA"] ? await this.utils.formatDateIso(order["FECHA"]) : null,
