@@ -30,6 +30,10 @@ class AuthService extends UserRepository {
       'list-products',
       'edit-products',
       'delete-products',
+      'create-wallet',
+      'list-wallet',
+      'edit-wallet',
+      'delete-wallet',
     ];
     this.emailSender = new EmailSenderService();
   }
