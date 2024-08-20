@@ -17,7 +17,7 @@ export class WalletsController {
    */
   importWalletsFromExcel = async (req: Request, res: Response): Promise<void | ResponseRequestInterface> => {
     try {
-      await this.service.importOrdersFromExcel(res, req.file, req.body);
+      await this.service.importWalletsFromExcel(res, req.file, req.body);
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
@@ -31,7 +31,7 @@ export class WalletsController {
   listWallets = async (req: Request, res: Response): Promise<void | ResponseRequestInterface> => {
     try {
       const { page, perPage, search } = req.query as any; // get pagination data
-      await this.service.listOrders(res, page, perPage, search);
+      await this.service.listWallets(res, page, perPage, search);
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);
     }

@@ -20,27 +20,27 @@ export class WalletsService extends WalletsRepository {
   }
 
   /**
-   * import orders from excel
+   * import wallets from excel
    * import { Response } from 'express';
    * @param { Response } res
    * @param file
    */
-  public async importOrdersFromExcel(res: Response, file: any, body: any): Promise<ResponseRequestInterface | void> {
+  public async importWalletsFromExcel(res: Response, file: any, body: any): Promise<ResponseRequestInterface | void> {
     try {
       // setImmediate(() => {
       // });
       await this.processFile(file.buffer, body.type, body.company);
   
-      let ordersBd: WalletInterface[] = []
+      let walletsBd: WalletInterface[] = []
       if (this.walletsData.length > 0) {
-        ordersBd = await this.insertMany(this.walletsData);
+        walletsBd = await this.insertMany(this.walletsData);
         this.clearWalletsData();
       }
 
       // process response
       ResponseHandler.successResponse(
         res,
-        ordersBd,
+        walletsBd,
         "Se ha iniciado el proceso de importación de wallets correctamente."
       );
     } catch (error: any) {
@@ -73,9 +73,9 @@ export class WalletsService extends WalletsRepository {
         const processedData = jsonData.map((row: any) => {
           return row;
         });
-        // Save orders (you can replace this with your actual save logic)
+        // Save wallet (you can replace this with your actual save logic)
         try {
-          await this.prepareOrderData(processedData, typeOrder, companyId);
+          await this.prepareWalletsData(processedData, typeOrder, companyId);
           resolve(true);
         } catch (error) {
           reject(error);
@@ -88,66 +88,66 @@ export class WalletsService extends WalletsRepository {
 
   /**
    * Save data on bbdd
-   * @param orders
+   * @param wallets
    */
-  private async prepareOrderData(orders: any[], typeOrder: TypeOrder, companyId: string) {
+  private async prepareWalletsData(wallets: any[], typeOrder: TypeOrder, companyId: string) {
     return new Promise(async (resolve, reject) => {
       // Implement your logic to save orders
       let i = 2;
-      for (const order of orders) {
+      for (const wallet of wallets) {
         // do some validations 
-        if (!order['HISTORIAL DE CARTERA']) {
+        if (!wallet['HISTORIAL DE CARTERA']) {
           this.clearWalletsData();
           reject(`Debes ingresar el ID del movimiento en la linea ${i}`);
         }
 
-        if (!order['FECHA']) {
+        if (!wallet['FECHA']) {
             this.clearWalletsData();
           reject(`Debes ingresar la FECHA del movimiento en la linea ${i}`);
         }
 
-        if (!order['TIPO']) {
+        if (!wallet['TIPO']) {
           this.clearWalletsData();
           reject(`Debes ingresar el TIPO de movimiento en la linea ${i}`);
         }
 
-        if (!order['MONTO']) {
+        if (!wallet['MONTO']) {
           this.clearWalletsData();
           reject(`Debes ingresar el MONTO del movimiento en la linea ${i}`);
         }
 
-        if (!order['MONTO PREVIO']) {
+        if (!wallet['MONTO PREVIO']) {
           this.clearWalletsData();
           reject(`Debes ingresar el MONTO PREVIO del movimiento en la linea ${i}`);
         }
 
-        if (!order['DESCRIPCIÓN']) {
+        if (!wallet['DESCRIPCIÓN']) {
           this.clearWalletsData();
           reject(`Debes ingresar la DESCRIPCION del movimiento en la linea ${i}`);
         }
 
         // prepare total
-        const totalMovement = order["MONTO"] ? order["MONTO"] : 0;
+        const totalMovement = wallet["MONTO"] ? wallet["MONTO"] : 0;
 
         //// set wallet object
         const object: WalletInterface = {
-          external_id: order["HISTORIAL DE CARTERA"] ?? null,
+          external_id: wallet["HISTORIAL DE CARTERA"] ?? null,
           amount: totalMovement,
           type_order: typeOrder,
           company: companyId,
-          description: order["DESCRIPCIÓN"] ?? null,
-          guide_number: order["NÚMERO DE GUIA"] ?? null,
-          order_id: order["ORDEN ID"] ?? null,
-          date: order["FECHA"] ? await this.utils.formatDateIso(order["FECHA"]) : null,
-          preview_amount: order["MONTO PREVIO"] ? order["MONTO PREVIO"] : 0,
-          type: order["TIPO"] === "SALIDA" ? WalletTypeMovement.DEBIT : WalletTypeMovement.CREDIT
+          description: wallet["DESCRIPCIÓN"] ?? null,
+          guide_number: wallet["NÚMERO DE GUIA"] ?? null,
+          order_id: wallet["ORDEN ID"] ?? null,
+          date: wallet["FECHA"] ? await this.utils.formatDateIso(wallet["FECHA"]) : null,
+          preview_amount: wallet["MONTO PREVIO"] ? wallet["MONTO PREVIO"] : 0,
+          type: wallet["TIPO"] === "SALIDA" ? WalletTypeMovement.DEBIT : WalletTypeMovement.CREDIT
         };
 
         //// validete isset wallet
         const issetWalletMovement = await this.getBy({ external_id: object.external_id }) as any;
         if (issetWalletMovement && issetWalletMovement.length > 0) {
-          for (const order of issetWalletMovement) {
-            await this.update(order._id as string, object);
+          for (const wallet of issetWalletMovement) {
+            await this.update(wallet._id as string, object);
           }
         } else {
           if (object['external_id']) {
@@ -161,10 +161,10 @@ export class WalletsService extends WalletsRepository {
   }
 
   /**
-   * liat orders
+   * liat wallets
    * @param res Express res
    */
-  public async listOrders (
+  public async listWallets (
     res: Response,
     page: number,
     perPage: number,
@@ -183,36 +183,27 @@ export class WalletsService extends WalletsRepository {
         query = {
           $or: [
             { external_id: searchRegex },
-            { date_order: searchRegex },
-            { phone: searchRegex },
-            { guide_number: searchRegex },
-            { guide_status: searchRegex },
-            { province: searchRegex },
-            { city: searchRegex },
-            { order_notes: searchRegex },
-            { order_conveyor: searchRegex },
-            { total_order: searchRegex },
-            { order_profit: searchRegex },
-            { freight_price: searchRegex },
-            { return_freight_cost: searchRegex },
-            { products: searchRegex },
             { type_order: searchRegex },
+            { description: searchRegex },
+            { guide_number: searchRegex },
+            { order_id: searchRegex },
+            { type: searchRegex },
           ],
         };
       }
 
       
       // do query
-      const orders: PaginationInterface = await this.paginate(query, skip, perPage, search);
+      const wallets: PaginationInterface = await this.paginate(query, skip, perPage, search);
 
       // process response
       ResponseHandler.successResponse(
         res,
         {
-          companies: orders.data,
-          totalItems: orders.totalItems
+          wallets: wallets.data,
+          totalItems: wallets.totalItems
         },
-        "Listado de ordenes."
+        "Listado de wallets."
       );
     } catch (error: any) {
       throw new Error(error.message);
@@ -220,7 +211,7 @@ export class WalletsService extends WalletsRepository {
   }
 
   /**
-   * clear order data
+   * clear wallets data
    */
   public clearWalletsData() {
     this.walletsData = [];
