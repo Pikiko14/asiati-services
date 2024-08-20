@@ -3,19 +3,22 @@ import { Response } from "express";
 import { Utils } from "../utils/utils";
 import { ResponseHandler } from "../utils/responseHandler";
 import OrdersRepository from "../repositories/orders.repository";
-import { OrderMetricsInterface, OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
+import WalletsRepository from "../repositories/wallets.repository";
 import { PaginationInterface, ResponseRequestInterface } from "../interfaces/response.interface";
+import { OrderMetricsInterface, OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
 
 export class OrdersService extends OrdersRepository {
   utils: Utils;
   ordersData: OrdersInterface[];
+  walletRepository: WalletsRepository;
   ordersDataUpdate: OrdersInterface[];
 
   constructor() {
     super();
     this.ordersData = [];
-    this.ordersDataUpdate = [];
     this.utils = new Utils();
+    this.ordersDataUpdate = [];
+    this.walletRepository = new WalletsRepository();
   }
 
   /**
@@ -43,6 +46,7 @@ export class OrdersService extends OrdersRepository {
         "Se ha iniciado el proceso de importación de ordenes correctamente."
       );
     } catch (error: any) {
+      this.clearOrdersData();
       throw new Error(error.message ?? error);
     }
   }
@@ -101,6 +105,7 @@ export class OrdersService extends OrdersRepository {
         }
 
         if (!order['FECHA']) {
+          this.clearOrdersData();
           reject(`Debes ingresar la FECHA en la linea ${i}`);
         }
 
@@ -210,7 +215,7 @@ export class OrdersService extends OrdersRepository {
         query = {
           $or: [
             { external_id: searchRegex },
-            { date_order: searchRegex },
+            //{ date_order: searchRegex },
             { phone: searchRegex },
             { guide_number: searchRegex },
             { guide_status: searchRegex },
@@ -291,7 +296,7 @@ export class OrdersService extends OrdersRepository {
 
         // sum freight of all orders delivered
         if (order.guide_status?.toUpperCase() === 'ENTREGADO') {
-          totalCollectionDropi += parseInt(order.total_order as string);
+          // totalCollectionDropi += parseInt(order.total_order as string);
           totalFreightDelivered+= parseInt(order.freight_price as string);
           totalOrdersDeliveredDropi+= parseInt(order.total_order as string);
         }
@@ -340,6 +345,9 @@ export class OrdersService extends OrdersRepository {
 
         isProccesExternalId.push(order.external_id as string);
       }
+
+      // get collection dropi
+      totalCollectionDropi = await this.walletRepository.getTotalCollected(query);
 
       return {
         totalFreight: totalFreight,

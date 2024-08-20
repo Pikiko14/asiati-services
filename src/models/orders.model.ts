@@ -9,7 +9,7 @@ const OrdersSchema = new Schema<OrdersInterface>(
             default: ''
         },
         date_order: {
-            type: String,
+            type: Date,
             required: true,
             default: ''
         },
