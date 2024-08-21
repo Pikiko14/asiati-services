@@ -85,7 +85,8 @@ class WalletsRepository {
   public async getTotalCollected(query: any): Promise<number> {
     query.date = query.date_order;
     delete query.date_order;
-    query.type = WalletTypeMovement.CREDIT;
+    query.type = WalletTypeMovement.DEBIT;
+    query.description = "SALIDA POR PETICION DE RETIRO DE SALDO EN CARTERA";
     const wallets = await this.getBy(query);
     const totalCollected = wallets.reduce((a, b) => a + (b.amount ? b.amount : 0), 0);
     return totalCollected;

@@ -4,8 +4,15 @@ import { Utils } from "../utils/utils";
 import { ResponseHandler } from "../utils/responseHandler";
 import OrdersRepository from "../repositories/orders.repository";
 import WalletsRepository from "../repositories/wallets.repository";
-import { PaginationInterface, ResponseRequestInterface } from "../interfaces/response.interface";
-import { OrderMetricsInterface, OrdersInterface, TypeOrder } from "../interfaces/orders.interface";
+import {
+  PaginationInterface,
+  ResponseRequestInterface,
+} from "../interfaces/response.interface";
+import {
+  OrderMetricsInterface,
+  OrdersInterface,
+  TypeOrder,
+} from "../interfaces/orders.interface";
 
 export class OrdersService extends OrdersRepository {
   utils: Utils;
@@ -27,13 +34,17 @@ export class OrdersService extends OrdersRepository {
    * @param { Response } res
    * @param file
    */
-  public async importOrdersFromExcel(res: Response, file: any, body: any): Promise<ResponseRequestInterface | void> {
+  public async importOrdersFromExcel(
+    res: Response,
+    file: any,
+    body: any
+  ): Promise<ResponseRequestInterface | void> {
     try {
       // setImmediate(() => {
       // });
       await this.processFile(file.buffer, body.type, body.company);
-  
-      let ordersBd: OrdersInterface[] = []
+
+      let ordersBd: OrdersInterface[] = [];
       if (this.ordersData.length > 0) {
         ordersBd = await this.insertMany(this.ordersData);
         this.clearOrdersData();
@@ -55,21 +66,28 @@ export class OrdersService extends OrdersRepository {
    * Process excel file
    * @param buffer
    */
-  private async processFile(buffer: Buffer, typeOrder: TypeOrder, companyId: string) {
+  private async processFile(
+    buffer: Buffer,
+    typeOrder: TypeOrder,
+    companyId: string
+  ) {
     try {
       return new Promise(async (resolve, reject) => {
         // Process file using xlsx
-        const workbook = xlsx.read(buffer, { type: "buffer", cellDates: true,
+        const workbook = xlsx.read(buffer, {
+          type: "buffer",
+          cellDates: true,
           cellNF: false,
-          cellText: false });
+          cellText: false,
+        });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        Object.keys(sheet).forEach(function(s) {
-          if(sheet[s].w) {
-              delete sheet[s].w;
-              sheet[s].z = '0';
+        Object.keys(sheet).forEach(function (s) {
+          if (sheet[s].w) {
+            delete sheet[s].w;
+            sheet[s].z = "0";
           }
-      });
+        });
         const jsonData = xlsx.utils.sheet_to_json(sheet, { raw: true });
 
         // Convert date serial numbers to actual dates
@@ -83,7 +101,7 @@ export class OrdersService extends OrdersRepository {
         } catch (error) {
           reject(error);
         }
-      })
+      });
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -93,74 +111,82 @@ export class OrdersService extends OrdersRepository {
    * Save data on bbdd
    * @param orders
    */
-  private async prepareOrderData(orders: any[], typeOrder: TypeOrder, companyId: string) {
+  private async prepareOrderData(
+    orders: any[],
+    typeOrder: TypeOrder,
+    companyId: string
+  ) {
     return new Promise(async (resolve, reject) => {
       // Implement your logic to save orders
       let i = 2;
       for (const order of orders) {
-        // do some validations 
-        if (!order['ID']) {
+        // do some validations
+        if (!order["ID"]) {
           this.clearOrdersData();
           reject(`Debes ingresar el ID en la linea ${i}`);
         }
 
-        if (!order['FECHA']) {
+        if (!order["FECHA"]) {
           this.clearOrdersData();
           reject(`Debes ingresar la FECHA en la linea ${i}`);
         }
 
-        if (!order['TELÉFONO']) {
+        if (!order["TELÉFONO"]) {
           this.clearOrdersData();
           reject(`Debes ingresar el TELÉFONO en la linea ${i}`);
         }
 
-        if (!order['ESTATUS']) {
+        if (!order["ESTATUS"]) {
           this.clearOrdersData();
           reject(`Debes ingresar el ESTATUS en la linea ${i}`);
         }
 
-        if (!order['DEPARTAMENTO_DESTINO']) {
+        if (!order["DEPARTAMENTO_DESTINO"]) {
           this.clearOrdersData();
           reject(`Debes ingresar el DEPARTAMENTO_DESTINO en la linea ${i}`);
         }
 
-        if (!order['CIUDAD_DESTINO']) {
+        if (!order["CIUDAD_DESTINO"]) {
           this.clearOrdersData();
           reject(`Debes ingresar la CIUDAD_DESTINO en la linea ${i}`);
         }
 
-        if (!order['TRANSPORTADORA']) {
+        if (!order["TRANSPORTADORA"]) {
           this.clearOrdersData();
           reject(`Debes ingresar la TRANSPORTADORA en la linea ${i}`);
         }
 
-        if (!order['TOTAL_DE_LA_ORDEN']) {
+        if (!order["TOTAL_DE_LA_ORDEN"]) {
           this.clearOrdersData();
           reject(`Debes ingresar el TOTAL_DE_LA_ORDEN en la linea ${i}`);
         }
 
-        if (!order['PRODUCTO']) {
+        if (!order["PRODUCTO"]) {
           this.clearOrdersData();
           reject(`Debes ingresar el PRODUCTO en la linea ${i}`);
         }
 
-        if (!order['CANTIDAD']) {
+        if (!order["CANTIDAD"]) {
           this.clearOrdersData();
           reject(`Debes ingresar la CANTIDAD en la linea ${i}`);
         }
 
         // prepare total
-        const totalOrder = order["TOTAL_DE_LA_ORDEN"] ? order["TOTAL_DE_LA_ORDEN"] : 0;
+        const totalOrder = order["TOTAL_DE_LA_ORDEN"]
+          ? order["TOTAL_DE_LA_ORDEN"]
+          : 0;
         const profit = order["GANANCIA"] ? order["GANANCIA"] : 0;
         const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"] : 0;
-        const returnFreight =order["COSTO_DEVOLUCION_FLETE"] ? order["COSTO_DEVOLUCION_FLETE"] : 0;
+        const returnFreight = order["COSTO_DEVOLUCION_FLETE"]
+          ? order["COSTO_DEVOLUCION_FLETE"]
+          : 0;
 
         // set order object
         const object: OrdersInterface = {
-          external_id: order["ID"] ?? order['id'],
+          external_id: order["ID"] ?? order["id"],
           date_order: await this.utils.formatDateIso(order["FECHA"]),
           phone: order["TELÉFONO"],
-          guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : '-',
+          guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : "-",
           guide_status: order["ESTATUS"],
           province: order["DEPARTAMENTO_DESTINO"],
           city: order["CIUDAD_DESTINO"],
@@ -173,30 +199,32 @@ export class OrdersService extends OrdersRepository {
           products: order["PRODUCTO"] ?? null,
           quantity: order["CANTIDAD"] ?? null,
           type_order: typeOrder ?? null,
-          company: companyId
+          company: companyId,
         };
         // validete isset orders
-        const issetOrder = await this.getBy({ external_id: order["ID"] }) as any;
+        const issetOrder = (await this.getBy({
+          external_id: order["ID"],
+        })) as any;
         if (issetOrder && issetOrder.length > 0) {
           for (const order of issetOrder) {
             await this.update(order._id as string, object);
           }
         } else {
-          if (object['external_id']) {
+          if (object["external_id"]) {
             this.ordersData.push(object);
           }
         }
         i++;
       }
       resolve(true);
-    })
+    });
   }
 
   /**
    * liat orders
    * @param res Express res
    */
-  public async listOrders (
+  public async listOrders(
     res: Response,
     page: number,
     perPage: number,
@@ -211,7 +239,7 @@ export class OrdersService extends OrdersRepository {
       // init search quert
       let query: any = {};
       if (search) {
-        const searchRegex = new RegExp(search, 'i');
+        const searchRegex = new RegExp(search, "i");
         query = {
           $or: [
             { external_id: searchRegex },
@@ -233,16 +261,20 @@ export class OrdersService extends OrdersRepository {
         };
       }
 
-      
       // do query
-      const orders: PaginationInterface = await this.paginate(query, skip, perPage, search);
+      const orders: PaginationInterface = await this.paginate(
+        query,
+        skip,
+        perPage,
+        search
+      );
 
       // process response
       ResponseHandler.successResponse(
         res,
         {
           companies: orders.data,
-          totalItems: orders.totalItems
+          totalItems: orders.totalItems,
         },
         "Listado de ordenes."
       );
@@ -255,15 +287,22 @@ export class OrdersService extends OrdersRepository {
    * list order metric
    * @param { string } company
    */
-  public async loadMetrics(company: string, from: string, to: string): Promise<OrderMetricsInterface> {
+  public async loadMetrics(
+    company: string,
+    from: string,
+    to: string
+  ): Promise<OrderMetricsInterface> {
     try {
       // filter data by order and company and date from and to
       const query = {
         company,
-        date_order: {}
-      }
+        date_order: {},
+      };
       if (from && to) {
-        query.date_order = { $gte: await this.utils.formatDateIso(from), $lte: await this.utils.formatDateIso(to) };
+        query.date_order = {
+          $gte: await this.utils.formatDateIso(from),
+          $lte: await this.utils.formatDateIso(to),
+        };
       }
       const orders: OrdersInterface[] = await this.getBy(query);
 
@@ -274,7 +313,7 @@ export class OrdersService extends OrdersRepository {
       let totalCancelDropi = 0;
       let totalRejectedDropi = 0;
       let ordersPendingDropi = 0;
-      let orderDeliveredDropi= 0;
+      let orderDeliveredDropi = 0;
       let ordersGenerateDropi = 0;
       let ordersReturnedDropi = 0;
       let totalCollectionDropi = 0;
@@ -283,55 +322,82 @@ export class OrdersService extends OrdersRepository {
       let totalOrdersDeliveredDropi = 0;
       let ordersPendingConfirmationDropi = 0;
 
-      const isProccesExternalId: string[] = []
+      const isProccesExternalId: string[] = [];
 
       for (const order of orders) {
         // validate if is in array
-        const isInArray = isProccesExternalId.includes(order.external_id as string);
+        const isInArray = isProccesExternalId.includes(
+          order.external_id as string
+        );
 
         // set collection and total deliverid
-        if (!isInArray && order.guide_status?.toUpperCase() === 'ENTREGADO') {
+        if (!isInArray && order.guide_status?.toUpperCase() === "ENTREGADO") {
           orderDeliveredDropi++;
         }
 
         // sum freight of all orders delivered
-        if (order.guide_status?.toUpperCase() === 'ENTREGADO') {
+        if (order.guide_status?.toUpperCase() === "ENTREGADO") {
           // totalCollectionDropi += parseInt(order.total_order as string);
-          totalFreightDelivered+= parseInt(order.freight_price as string);
-          totalOrdersDeliveredDropi+= parseInt(order.total_order as string);
+          totalFreightDelivered += parseInt(order.freight_price as string);
+          totalOrdersDeliveredDropi += parseInt(order.total_order as string);
         }
 
         // set count of devolution orders
-        if (!isInArray && order.guide_status?.toUpperCase() === 'DEVOLUCION') {
+        if (
+          (!isInArray && order.guide_status?.toUpperCase() === "DEVOLUCION") ||
+          (!isInArray &&
+            order.guide_status?.toUpperCase() === "DEVOLUCION EN TRANSITO") ||
+          (!isInArray && order.guide_status?.toUpperCase() === "DEVUELTA") ||
+          (!isInArray &&
+            order.guide_status?.toUpperCase() === "RECIBIDO POR DROPI")
+        ) {
           ordersReturnedDropi++;
         }
 
         // get freight from order in devolution
-        if(order.guide_status?.toUpperCase() === 'DEVOLUCION') {
-          returnedFreight+= parseInt(order.freight_price as string);
+        if (order.guide_status?.toUpperCase() === "DEVOLUCION") {
+          returnedFreight += parseInt(order.freight_price as string);
         }
 
         // set count of pending orders
-        if (!isInArray && order.guide_status?.toUpperCase() === 'PENDIENTE') ordersPendingDropi++;
+        if (
+          (!isInArray && order.guide_status?.toUpperCase() !== "ENTREGADO") &&
+          (!isInArray && order.guide_status?.toUpperCase() !== "DEVOLUCION") &&
+          (!isInArray &&
+            order.guide_status?.toUpperCase() !== "DEVOLUCION EN TRANSITO") &&
+          (!isInArray && order.guide_status?.toUpperCase() !== "DEVUELTA") &&
+          (!isInArray &&
+            order.guide_status?.toUpperCase() !== "RECIBIDO POR DROPI") &&
+          (!isInArray && order.guide_status?.toUpperCase() !== "CANCELADO") &&
+          (!isInArray && order.guide_status?.toUpperCase() !== "RECHAZADO") &&
+          (!isInArray && order.guide_status?.toUpperCase() !== "GUIA_ANULADA")
+        )
+          ordersPendingDropi++;
 
         // set count of pending confirmation orders
-        if (!isInArray && order.guide_status?.toUpperCase() === 'PENDIENTE CONFIRMACION') ordersPendingConfirmationDropi++;
-        
-        // set count of calcelled confirmation orders
-        if (!isInArray && order.guide_status?.toUpperCase() === 'CANCELADO') totalCancelDropi++;
+        if (
+          !isInArray &&
+          order.guide_status?.toUpperCase() === "PENDIENTE CONFIRMACION"
+        )
+          ordersPendingConfirmationDropi++;
 
         // set count of calcelled confirmation orders
-        if (!isInArray && order.guide_status?.toUpperCase() === 'RECHAZADO') totalRejectedDropi++;
+        if (!isInArray && order.guide_status?.toUpperCase() === "CANCELADO" || !isInArray && order.guide_status?.toUpperCase() === "GUIA_ANULADA")
+          totalCancelDropi++;
+
+        // set count of calcelled confirmation orders
+        if (!isInArray && order.guide_status?.toUpperCase() === "RECHAZADO")
+          totalRejectedDropi++;
 
         if (
-          order.products.includes('Bio') ||
-          order.products.includes('Hot') ||
-          order.products.includes('Oxi') ||
-          order.products.includes('Tribul') ||
-          order.products.includes('Voltr') ||
-          order.products.includes('Men')
+          order.products.includes("Bio") ||
+          order.products.includes("Hot") ||
+          order.products.includes("Oxi") ||
+          order.products.includes("Tribul") ||
+          order.products.includes("Voltr") ||
+          order.products.includes("Men")
         ) {
-          totalHealthWellbeing+= parseInt(order.total_order as string);
+          totalHealthWellbeing += parseInt(order.total_order as string);
         }
 
         // set count total orders
@@ -340,14 +406,17 @@ export class OrdersService extends OrdersRepository {
         }
 
         // set total orders
-        totalFreight+= parseInt(order.freight_price as string);
+        totalFreight += parseInt(order.freight_price as string);
         totalOrderDropi += parseInt(order.total_order as string);
 
         isProccesExternalId.push(order.external_id as string);
       }
 
       // get collection dropi
-      totalCollectionDropi = await this.walletRepository.getTotalCollected(query);
+      const totalCollectionDropiAmount =
+        await this.walletRepository.getTotalCollected(query);
+      totalCollectionDropi =
+        totalCollectionDropiAmount - totalCollectionDropiAmount / 250;
 
       return {
         totalFreight: totalFreight,
