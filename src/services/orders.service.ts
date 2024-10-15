@@ -317,6 +317,7 @@ export class OrdersService extends OrdersRepository {
       // filter data by order and company and date from and to
       const query = {
         company,
+        type_order: TypeOrder.DROPI,
         date_order: {},
       };
       if (from && to) {
@@ -438,6 +439,9 @@ export class OrdersService extends OrdersRepository {
         await this.walletRepository.getTotalCollected(query);
       totalCollectionDropi =
         totalCollectionDropiAmount - totalCollectionDropiAmount / 250;
+      
+      // shopify
+      const shopifyData = await this.loadMetricsShopify(company, from, to);
 
       return {
         totalFreight: totalFreight,
@@ -455,6 +459,7 @@ export class OrdersService extends OrdersRepository {
         totalOrdersDropiDelivered: totalOrdersDeliveredDropi,
         pendingConfirmationDropiOrders: ordersPendingConfirmationDropi,
         cancelledAndRejectedOrders: totalCancelDropi + totalRejectedDropi,
+        shopify: shopifyData,
       };
     } catch (error: any) {
       throw new Error(error.message);
@@ -466,5 +471,48 @@ export class OrdersService extends OrdersRepository {
    */
   public clearOrdersData() {
     this.ordersData = [];
+  }
+
+  /**
+   * load shopify metrics
+   * @param { string } company
+   * 
+   */
+  public async loadMetricsShopify(
+    company: string,
+    from: string,
+    to: string
+  ): Promise<any> {
+    try {
+      // filter data by order and company and date from and to
+      const query = {
+        company,
+        type_order: TypeOrder.SHOPIFY,
+        date_order: {},
+      };
+      if (from && to) {
+        query.date_order = {
+          $gte: await this.utils.formatDateIso(from),
+          $lte: await this.utils.formatDateIso(to),
+        };
+      }
+      const orders: OrdersInterface[] = await this.getBy(query);
+
+      // prepare data
+      let totalShopify = 0;
+      let totalOrderShopify = 0;
+
+      orders.map((order: OrdersInterface) => {
+        totalShopify += parseFloat(order.total_order as string);
+        totalOrderShopify += order.quantity_order ?? 0;
+      });
+
+      return {
+        totalShopify,
+        totalOrderShopify,
+      };
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
 }

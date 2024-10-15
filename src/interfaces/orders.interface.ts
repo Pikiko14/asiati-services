@@ -44,4 +44,5 @@ export interface OrderMetricsInterface {
   pendingConfirmationDropiOrders: number;
   cancelledAndRejectedOrders: number;
   deliveredDropiOrders: number;
+  shopify: any;
 }
