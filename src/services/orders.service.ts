@@ -223,12 +223,14 @@ export class OrdersService extends OrdersRepository {
           const totalOrder = order["Valor"]
             ? order["Valor"]
             : 0;
+          const dateString = await this.utils.formatDateIso(order["Fecha"]);
           const object: OrdersInterface = {
-            date_order: await this.utils.formatDateIso(order["Fecha"]),
+            date_order: dateString,
             total_order: parseFloat(totalOrder),
             type_order: typeOrder ?? null,
             company: companyId,
             quantity_order: order["Ordenes"] ? parseInt(order["Ordenes"]) : 0,
+            external_id: `SHOPIFY_${dateString}`,
           };
           if (object["date_order"]) {
             this.ordersData.push(object);
