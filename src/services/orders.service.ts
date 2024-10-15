@@ -119,102 +119,121 @@ export class OrdersService extends OrdersRepository {
     return new Promise(async (resolve, reject) => {
       // Implement your logic to save orders
       let i = 2;
-      for (const order of orders) {
-        // do some validations
-        if (!order["ID"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar el ID en la linea ${i}`);
-        }
-
-        if (!order["FECHA"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar la FECHA en la linea ${i}`);
-        }
-
-        if (!order["TELÉFONO"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar el TELÉFONO en la linea ${i}`);
-        }
-
-        if (!order["ESTATUS"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar el ESTATUS en la linea ${i}`);
-        }
-
-        if (!order["DEPARTAMENTO_DESTINO"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar el DEPARTAMENTO_DESTINO en la linea ${i}`);
-        }
-
-        if (!order["CIUDAD_DESTINO"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar la CIUDAD_DESTINO en la linea ${i}`);
-        }
-
-        if (!order["TRANSPORTADORA"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar la TRANSPORTADORA en la linea ${i}`);
-        }
-
-        if (!order["TOTAL_DE_LA_ORDEN"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar el TOTAL_DE_LA_ORDEN en la linea ${i}`);
-        }
-
-        if (!order["PRODUCTO"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar el PRODUCTO en la linea ${i}`);
-        }
-
-        if (!order["CANTIDAD"]) {
-          this.clearOrdersData();
-          reject(`Debes ingresar la CANTIDAD en la linea ${i}`);
-        }
-
-        // prepare total
-        const totalOrder = order["TOTAL_DE_LA_ORDEN"]
-          ? order["TOTAL_DE_LA_ORDEN"]
-          : 0;
-        const profit = order["GANANCIA"] ? order["GANANCIA"] : 0;
-        const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"] : 0;
-        const returnFreight = order["COSTO_DEVOLUCION_FLETE"]
-          ? order["COSTO_DEVOLUCION_FLETE"]
-          : 0;
-
-        // set order object
-        const object: OrdersInterface = {
-          external_id: order["ID"] ?? order["id"],
-          date_order: await this.utils.formatDateIso(order["FECHA"]),
-          phone: order["TELÉFONO"],
-          guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : "-",
-          guide_status: order["ESTATUS"],
-          province: order["DEPARTAMENTO_DESTINO"],
-          city: order["CIUDAD_DESTINO"],
-          order_notes: order["NOTAS"] ?? null,
-          order_conveyor: order["TRANSPORTADORA"] ?? null,
-          total_order: parseFloat(totalOrder),
-          order_profit: parseFloat(profit ?? 0),
-          freight_price: parseFloat(freight ?? 0),
-          return_freight_cost: parseFloat(returnFreight ?? 0),
-          products: order["PRODUCTO"] ?? null,
-          quantity: order["CANTIDAD"] ?? null,
-          type_order: typeOrder ?? null,
-          company: companyId,
-        };
-        // validete isset orders
-        const issetOrder = (await this.getBy({
-          external_id: order["ID"],
-        })) as any;
-        if (issetOrder && issetOrder.length > 0) {
-          for (const order of issetOrder) {
-            await this.update(order._id as string, object);
+      // validate orders dropi
+      if (typeOrder === TypeOrder.DROPI) {
+        for (const order of orders) {
+          // do some validations
+          if (!order["ID"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar el ID en la linea ${i}`);
           }
-        } else {
-          if (object["external_id"]) {
+
+          if (!order["FECHA"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar la FECHA en la linea ${i}`);
+          }
+
+          if (!order["TELÉFONO"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar el TELÉFONO en la linea ${i}`);
+          }
+
+          if (!order["ESTATUS"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar el ESTATUS en la linea ${i}`);
+          }
+
+          if (!order["DEPARTAMENTO_DESTINO"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar el DEPARTAMENTO_DESTINO en la linea ${i}`);
+          }
+
+          if (!order["CIUDAD_DESTINO"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar la CIUDAD_DESTINO en la linea ${i}`);
+          }
+
+          if (!order["TRANSPORTADORA"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar la TRANSPORTADORA en la linea ${i}`);
+          }
+
+          if (!order["TOTAL_DE_LA_ORDEN"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar el TOTAL_DE_LA_ORDEN en la linea ${i}`);
+          }
+
+          if (!order["PRODUCTO"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar el PRODUCTO en la linea ${i}`);
+          }
+
+          if (!order["CANTIDAD"]) {
+            this.clearOrdersData();
+            reject(`Debes ingresar la CANTIDAD en la linea ${i}`);
+          }
+
+          // prepare total
+          const totalOrder = order["TOTAL_DE_LA_ORDEN"]
+            ? order["TOTAL_DE_LA_ORDEN"]
+            : 0;
+          const profit = order["GANANCIA"] ? order["GANANCIA"] : 0;
+          const freight = order["PRECIO_FLETE"] ? order["PRECIO_FLETE"] : 0;
+          const returnFreight = order["COSTO_DEVOLUCION_FLETE"]
+            ? order["COSTO_DEVOLUCION_FLETE"]
+            : 0;
+
+          // set order object
+          const object: OrdersInterface = {
+            external_id: order["ID"] ?? order["id"],
+            date_order: await this.utils.formatDateIso(order["FECHA"]),
+            phone: order["TELÉFONO"],
+            guide_number: order["NÚMERO GUIA"] ? `${order["NÚMERO GUIA"]}` : "-",
+            guide_status: order["ESTATUS"],
+            province: order["DEPARTAMENTO_DESTINO"],
+            city: order["CIUDAD_DESTINO"],
+            order_notes: order["NOTAS"] ?? null,
+            order_conveyor: order["TRANSPORTADORA"] ?? null,
+            total_order: parseFloat(totalOrder),
+            order_profit: parseFloat(profit ?? 0),
+            freight_price: parseFloat(freight ?? 0),
+            return_freight_cost: parseFloat(returnFreight ?? 0),
+            products: order["PRODUCTO"] ?? null,
+            quantity: order["CANTIDAD"] ?? null,
+            type_order: typeOrder ?? null,
+            company: companyId,
+          };
+          // validete isset orders
+          const issetOrder = (await this.getBy({
+            external_id: order["ID"],
+          })) as any;
+          if (issetOrder && issetOrder.length > 0) {
+            for (const order of issetOrder) {
+              await this.update(order._id as string, object);
+            }
+          } else {
+            if (object["external_id"]) {
+              this.ordersData.push(object);
+            }
+          }
+          i++;
+        }
+      } else {
+        for (const order of orders) {
+          const totalOrder = order["Valor"]
+            ? order["Valor"]
+            : 0;
+          const object: OrdersInterface = {
+            date_order: await this.utils.formatDateIso(order["Fecha"]),
+            total_order: parseFloat(totalOrder),
+            type_order: typeOrder ?? null,
+            company: companyId,
+            quantity_order: order["Ordenes"] ? parseInt(order["Ordenes"]) : 0,
+          };
+          if (object["date_order"]) {
             this.ordersData.push(object);
           }
         }
-        i++;
       }
       resolve(true);
     });
@@ -390,12 +409,12 @@ export class OrdersService extends OrdersRepository {
           totalRejectedDropi++;
 
         if (
-          order.products.includes("Bio") ||
-          order.products.includes("Hot") ||
-          order.products.includes("Oxi") ||
-          order.products.includes("Tribul") ||
-          order.products.includes("Voltr") ||
-          order.products.includes("Men")
+          order.products && order.products.includes("Bio") ||
+          order.products &&order.products.includes("Hot") ||
+          order.products &&order.products.includes("Oxi") ||
+          order.products &&order.products.includes("Tribul") ||
+          order.products &&order.products.includes("Voltr") ||
+          order.products &&order.products.includes("Men")
         ) {
           totalHealthWellbeing += parseInt(order.total_order as string);
         }
