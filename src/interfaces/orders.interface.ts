@@ -45,4 +45,7 @@ export interface OrderMetricsInterface {
   cancelledAndRejectedOrders: number;
   deliveredDropiOrders: number;
   shopify: any;
+  guiasAnuladas: number;
+  totalHistoricalDevolution: number;
+  totalHistoricalCancelled: number;
 }

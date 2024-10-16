@@ -326,9 +326,29 @@ export class OrdersService extends OrdersRepository {
           $lte: await this.utils.formatDateIso(to),
         };
       }
-      const orders: OrdersInterface[] = await this.getBy(query);
+      const orders: OrdersInterface[] = await this.getBy(query); 
+      const orderDropiHistorical: OrdersInterface[] = await this.getBy({
+        type_order: TypeOrder.DROPI,
+        guide_status: { 
+          $in: [
+            "DEVOLUCION", 
+            "DEVOLUCION EN TRANSITO", 
+            "DEVUELTA", 
+            "RECIBIDO POR DROPI"
+          ] 
+        }
+      });
+      const orderDropiCancelled: OrdersInterface[] = await this.getBy({
+        type_order: TypeOrder.DROPI,
+        guide_status: { 
+          $in: [
+            "CANCELADO"
+          ] 
+        }
+      });
 
       // ini calculation
+      let guiasAnuladas= 0;
       let totalFreight = 0;
       let returnedFreight = 0;
       let totalOrderDropi = 0;
@@ -342,10 +362,14 @@ export class OrdersService extends OrdersRepository {
       let totalHealthWellbeing = 0;
       let totalFreightDelivered = 0;
       let totalOrdersDeliveredDropi = 0;
+      let totalHistoricalDevolution = 0;
+      let totalHistoricalCancelled = 0;
       let ordersPendingConfirmationDropi = 0;
 
       const isProccesExternalId: string[] = [];
+      const isHistoricalProccessExternalId: string[] = [];
 
+      // order in date
       for (const order of orders) {
         // validate if is in array
         const isInArray = isProccesExternalId.includes(
@@ -422,6 +446,10 @@ export class OrdersService extends OrdersRepository {
           totalHealthWellbeing += parseInt(order.total_order as string);
         }
 
+        if (order.guide_status?.toUpperCase() === "GUIA_ANULADA") {
+          guiasAnuladas += 1;
+        }
+
         // set count total orders
         if (!isInArray) {
           ordersGenerateDropi++;
@@ -433,6 +461,17 @@ export class OrdersService extends OrdersRepository {
 
         isProccesExternalId.push(order.external_id as string);
       }
+
+      for (const element of orderDropiCancelled) {
+        if (!isHistoricalProccessExternalId.includes(
+          element.external_id as string)) {
+            totalHistoricalCancelled += 1;
+            isHistoricalProccessExternalId.push(element.external_id as string);
+        }
+      }
+
+      // order historical dropi devolution
+      totalHistoricalDevolution = orderDropiHistorical.length;
 
       // get collection dropi
       const totalCollectionDropiAmount =
@@ -460,6 +499,9 @@ export class OrdersService extends OrdersRepository {
         pendingConfirmationDropiOrders: ordersPendingConfirmationDropi,
         cancelledAndRejectedOrders: totalCancelDropi + totalRejectedDropi,
         shopify: shopifyData,
+        guiasAnuladas,
+        totalHistoricalDevolution,
+        totalHistoricalCancelled,
       };
     } catch (error: any) {
       throw new Error(error.message);
