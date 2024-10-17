@@ -38,6 +38,8 @@ class AuthService extends UserRepository {
       'list-configuration',
       'edit-configuration',
       'delete-configuration',
+      'create-expenses',
+      'list-expenses',
     ];
     this.emailSender = new EmailSenderService();
   }
