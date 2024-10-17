@@ -59,7 +59,7 @@ export class ConfigurationService extends ConfigurationRepository {
       return ResponseHandler.successResponse(
         res,
         configuration,
-        "Configuración ajustada correctamente."
+        "Datos de configuración."
       );
     } catch (error: any) {
       throw error.message;
