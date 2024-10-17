@@ -18,6 +18,8 @@ export const ConfigurationCreation = [
     .withMessage("El valor fullfilment está vacío")
     .isNumeric()
     .withMessage("El valor fullfilment debe ser un número"),
+  check('renttax')
+    .optional(),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
 ];
