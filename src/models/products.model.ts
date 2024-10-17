@@ -33,6 +33,11 @@ const ProductSschema = new Schema<ProductsInterface>(
       type: Boolean,
       required: false,
       default: false
+    },
+    iva: {
+      type: Number,
+      required: false,
+      default: 0
     }
   },
   {

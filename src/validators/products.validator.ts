@@ -23,14 +23,14 @@ const productsCreationValidator = [
     .withMessage("El campo valor no puede estar vacío")
     .isNumeric()
     .withMessage("El campo valor debe ser un numero"),
-  check("is_health_and_wellness")
+  check("iva")
     .exists()
-    .withMessage("El campo is_health_and_wellness es requerido")
+    .withMessage("El campo iva es requerido")
     .notEmpty()
-    .withMessage("El campo is_health_and_wellness no puede estar vacío")
-    .isBoolean()
+    .withMessage("El campo iva no puede estar vacío")
+    .isNumeric()
     .withMessage(
-      "El campo is_health_and_wellness debe ser (Verdadero o Falso)"
+      "El campo iva debe ser un numero."
     ),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),
