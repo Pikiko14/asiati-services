@@ -34,6 +34,10 @@ class AuthService extends UserRepository {
       'list-wallet',
       'edit-wallet',
       'delete-wallet',
+      'create-configuration',
+      'list-configuration',
+      'edit-configuration',
+      'delete-configuration',
     ];
     this.emailSender = new EmailSenderService();
   }
