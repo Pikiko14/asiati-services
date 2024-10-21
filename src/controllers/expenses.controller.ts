@@ -41,7 +41,8 @@ export class ExpensesController {
     res: Response
   ): Promise<void | ExpensesInterface[] | null | ResponseRequestInterface> => {
     try {
-      await this.service.listExpenses(res);
+      const { company = null } = req.params as any;
+      await this.service.listExpenses(res, company);
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message);
     }

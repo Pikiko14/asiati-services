@@ -17,6 +17,19 @@ class ExpenseRepository {
     const expensesBd = await this.model.create(expense);
     return expensesBd;
   }
+
+  /**
+   * List expenses by company
+   * @param { string | null } company
+   * @return {Promise<ExpensesInterface[]>}
+   */
+  public async getExpensesByCompany (company: null | string): Promise<ExpensesInterface[]> {
+    const query: any = {};
+    if (company) {
+      query.company = company;
+    }
+    return await this.model.find(query);
+  }
 }
 
 export default ExpenseRepository;

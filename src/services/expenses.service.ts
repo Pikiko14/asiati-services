@@ -42,14 +42,18 @@ export class ExpensesService extends ExpenseRepository {
    * @returns Promise<void>
    */
   listExpenses = async (
-    res: Response
+    res: Response,
+    company: string
   ): Promise<ExpensesInterface | void | null | ResponseRequestInterface>  => {
     try {
+      // get expenses
+      const expenses = await this.getExpensesByCompany(company);
+
       // return data
       return ResponseHandler.createdResponse(
         res,
-        {},
-        "Listadod e gastos."
+        expenses,
+        "Listado de gastos."
       );
     } catch (error: any) {
       throw error.message;
