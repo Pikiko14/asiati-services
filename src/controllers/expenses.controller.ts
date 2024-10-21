@@ -66,4 +66,22 @@ export class ExpensesController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   };
+
+  /**
+   * delete expenses
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  deleteExpense = async (
+    req: Request,
+    res: Response
+  ): Promise<void | ExpensesInterface | null | ResponseRequestInterface> => {
+    try {
+      const { id } = req.params as any;
+      return await this.service.deleteExpense(res, id);
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  };
 }

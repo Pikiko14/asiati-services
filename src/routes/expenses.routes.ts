@@ -43,5 +43,15 @@ router.put(
   controller.updateExpense
 );
 
+/**
+ * Do delete expenses
+ */
+router.delete(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("create-expenses"),
+  controller.deleteExpense
+);
+
 // export router
 export { router };

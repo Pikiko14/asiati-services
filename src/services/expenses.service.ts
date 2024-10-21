@@ -85,4 +85,29 @@ export class ExpensesService extends ExpenseRepository {
       throw error.message;
     }
   }
+
+  /**
+   * delete configuration
+   * @param res Express response
+   * @param id The id of the request
+   * @param body The body of the request
+   * @returns Promise
+   */
+  public async deleteExpense(
+    res: Response,
+    id: string,
+  ): Promise<ExpensesInterface | void | null | ResponseRequestInterface> {
+    try {
+      const expense = await this.delete(id);
+
+      // return data
+      return ResponseHandler.createdResponse(
+        res,
+        expense,
+        "Gasto eliminado correctamente."
+      );
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
 }

@@ -47,6 +47,14 @@ class ExpenseRepository {
   public async update (id: string, body: ExpensesInterface): Promise<ExpensesInterface | void | null> {
     return await this.model.findByIdAndUpdate(id, body, { new: true });
   }
+
+  /**
+   * delete
+   */
+  public async delete(id: string): Promise<ExpensesInterface | void | null> {
+    return await this.model.findByIdAndDelete(id);
+  }
+
 }
 
 export default ExpenseRepository;
