@@ -30,6 +30,23 @@ class ExpenseRepository {
     }
     return await this.model.find(query);
   }
+
+  /**
+   * Get expense by id
+   * @param id
+   */
+  public async getExpenseById (id: string): Promise<ExpensesInterface | void | null> {
+    return await this.model.findById(id);
+  }
+
+  /**
+   * Update expenses data
+   * @param id
+   * @param body
+   */
+  public async update (id: string, body: ExpensesInterface): Promise<ExpensesInterface | void | null> {
+    return await this.model.findByIdAndUpdate(id, body, { new: true });
+  }
 }
 
 export default ExpenseRepository;

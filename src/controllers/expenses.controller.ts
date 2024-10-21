@@ -47,4 +47,23 @@ export class ExpensesController {
       ResponseHandler.handleInternalError(res, error, error.message);
     }
   };
+
+  /**
+   * update expenses
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  updateExpense = async (
+    req: Request,
+    res: Response
+  ): Promise<void | ExpensesInterface | null | ResponseRequestInterface> => {
+    try {
+      const { id } = req.params as any;
+      const body = matchedData(req) as ExpensesInterface;
+      return await this.service.updateExpense(res, id, body);
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message);
+    }
+  };
 }

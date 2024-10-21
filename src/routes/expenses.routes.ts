@@ -32,5 +32,16 @@ router.get(
   controller.listExpenses
 );
 
+/**
+ * Do update expenses
+ */
+router.put(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("create-expenses"),
+  ExpensesCreation,
+  controller.updateExpense
+);
+
 // export router
 export { router };
