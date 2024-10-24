@@ -48,4 +48,8 @@ export interface OrderMetricsInterface {
   guiasAnuladas: number;
   totalHistoricalDevolution: number;
   totalHistoricalCancelled: number;
+  descIva: number;
+  productCosto: number;
+  ivaAFavor: number;
+  utilidadBruta: number;
 }

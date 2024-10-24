@@ -348,8 +348,10 @@ export class OrdersService extends OrdersRepository {
       });
 
       // ini calculation
-      let guiasAnuladas= 0;
+      let descIva = 0;
+      let productCosto = 0
       let totalFreight = 0;
+      let guiasAnuladas = 0;
       let returnedFreight = 0;
       let totalOrderDropi = 0;
       let totalCancelDropi = 0;
@@ -365,6 +367,8 @@ export class OrdersService extends OrdersRepository {
       let totalHistoricalDevolution = 0;
       let totalHistoricalCancelled = 0;
       let ordersPendingConfirmationDropi = 0;
+      let ivaAFavor = 0;
+      let utilidadBruta = 0;
 
       const isProccesExternalId: string[] = [];
       const isHistoricalProccessExternalId: string[] = [];
@@ -386,6 +390,8 @@ export class OrdersService extends OrdersRepository {
           // totalCollectionDropi += parseInt(order.total_order as string);
           totalFreightDelivered += parseInt(order.freight_price as string);
           totalOrdersDeliveredDropi += parseInt(order.total_order as string);
+
+          // CALCULAR COSTO PRODUCTO
         }
 
         // set count of devolution orders
@@ -502,6 +508,10 @@ export class OrdersService extends OrdersRepository {
         guiasAnuladas,
         totalHistoricalDevolution,
         totalHistoricalCancelled,
+        descIva,
+        productCosto,
+        ivaAFavor,
+        utilidadBruta
       };
     } catch (error: any) {
       throw new Error(error.message);
