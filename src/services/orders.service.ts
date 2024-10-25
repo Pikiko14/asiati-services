@@ -13,18 +13,21 @@ import {
   OrdersInterface,
   TypeOrder,
 } from "../interfaces/orders.interface";
+import ProductsRepository from "../repositories/products.repository";
 
 export class OrdersService extends OrdersRepository {
   utils: Utils;
   ordersData: OrdersInterface[];
   walletRepository: WalletsRepository;
   ordersDataUpdate: OrdersInterface[];
+  productsRepository: ProductsRepository;
 
   constructor() {
     super();
     this.ordersData = [];
     this.utils = new Utils();
     this.ordersDataUpdate = [];
+    this.productsRepository = new ProductsRepository();
     this.walletRepository = new WalletsRepository();
   }
 
@@ -392,6 +395,16 @@ export class OrdersService extends OrdersRepository {
           totalOrdersDeliveredDropi += parseInt(order.total_order as string);
 
           // CALCULAR COSTO PRODUCTO
+        }
+
+        // calcular descuento de iva
+        const productBd = await this.productsRepository.getProductsByNameString(order.products as string);
+        if (productBd) {
+          const tax = (productBd?.iva / 100);
+          const base = order?.total_order / (1 + tax);
+          const base2Decimal = base.toFixed(2);
+          const ivaInOrder = parseFloat(base2Decimal) * tax;
+          descIva += parseFloat(ivaInOrder.toFixed(2));
         }
 
         // set count of devolution orders

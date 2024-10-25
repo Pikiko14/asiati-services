@@ -57,6 +57,10 @@ class ProductsRepository {
   public async getProductById(id: string): Promise<ProductsInterface | void | null> {
     return this.model.findById(id);
   }
+
+  public async getProductsByNameString (name: string): Promise<ProductsInterface | void | null> {
+    return this.model.findOne({ name: name });
+  }
 }
 
 export default ProductsRepository;
