@@ -110,4 +110,25 @@ export class ExpensesService extends ExpenseRepository {
       throw error.message;
     }
   }
+
+  /**
+   * get expenses between dates
+   * @param {string} start
+   * @param {string} end
+   * @returns Promise
+   */
+  public async getExpensesBetweenDates(
+    start: string,
+    end: string,
+    company: string
+  ): Promise<ExpensesInterface[] | void> {
+    try {
+      const expenses = await this.getExpensesBetweenDatesQuery(start, end, company);
+
+      // return data
+      return expenses;
+    } catch (error: any) {
+      throw error.message;
+    }
+  }
 }

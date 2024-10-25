@@ -52,4 +52,10 @@ export interface OrderMetricsInterface {
   productCosto: number;
   ivaAFavor: number;
   utilidadBruta: number;
+  flete: number;
+  devolucionFlete: number;
+  fullFilmentTotal: number;
+  costoOperativo: number;
+  cuatroPorMil: number;
+  renttax: number;
 }

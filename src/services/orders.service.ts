@@ -14,6 +14,9 @@ import {
   TypeOrder,
 } from "../interfaces/orders.interface";
 import ProductsRepository from "../repositories/products.repository";
+import ConfigurationRepository from "../repositories/configuration.repository";
+import { ExpensesService } from "./expenses.service";
+import { ExpensesInterface } from "../interfaces/expenses.interface";
 
 export class OrdersService extends OrdersRepository {
   utils: Utils;
@@ -21,6 +24,8 @@ export class OrdersService extends OrdersRepository {
   walletRepository: WalletsRepository;
   ordersDataUpdate: OrdersInterface[];
   productsRepository: ProductsRepository;
+  configurationRepository: ConfigurationRepository;
+  expenseServices: ExpensesService;
 
   constructor() {
     super();
@@ -29,6 +34,8 @@ export class OrdersService extends OrdersRepository {
     this.ordersDataUpdate = [];
     this.productsRepository = new ProductsRepository();
     this.walletRepository = new WalletsRepository();
+    this.configurationRepository = new ConfigurationRepository();
+    this.expenseServices = new ExpensesService();
   }
 
   /**
@@ -350,6 +357,9 @@ export class OrdersService extends OrdersRepository {
         }
       });
 
+      // configuration
+      const configuration = await this.configurationRepository.getConfiguration();
+
       // ini calculation
       let descIva = 0;
       let productCosto = 0
@@ -372,12 +382,19 @@ export class OrdersService extends OrdersRepository {
       let ordersPendingConfirmationDropi = 0;
       let ivaAFavor = 0;
       let utilidadBruta = 0;
+      let flete = 0;
+      let devolucionFlete = 0;
+      let fullFilmentOrder = 0;
+      let cuatroPorMil = 0;
 
       const isProccesExternalId: string[] = [];
       const isHistoricalProccessExternalId: string[] = [];
 
       // order in date
       for (const order of orders) {
+        // product in bbdd
+        const productBd = await this.productsRepository.getProductsByNameString(order.products as string);
+
         // validate if is in array
         const isInArray = isProccesExternalId.includes(
           order.external_id as string
@@ -395,16 +412,52 @@ export class OrdersService extends OrdersRepository {
           totalOrdersDeliveredDropi += parseInt(order.total_order as string);
 
           // CALCULAR COSTO PRODUCTO
+          if (order.quantity && productBd?.value) {
+            const costoProducto = order?.quantity * productBd?.value;
+            productCosto += parseInt(costoProducto.toFixed(2));
+          }
         }
 
-        // calcular descuento de iva
-        const productBd = await this.productsRepository.getProductsByNameString(order.products as string);
-        if (productBd) {
+        // calcular descuento de iva e iva a favor
+        if (productBd && productBd?.iva && productBd?.iva > 0) {
           const tax = (productBd?.iva / 100);
           const base = order?.total_order / (1 + tax);
           const base2Decimal = base.toFixed(2);
           const ivaInOrder = parseFloat(base2Decimal) * tax;
           descIva += parseFloat(ivaInOrder.toFixed(2));
+        }
+
+        // iva a favor
+        if (order.guide_status?.toUpperCase() === "ENTREGADO" && productBd && productBd?.iva > 0) { // validar como calcular.
+          const tax = (productBd?.iva / 100);
+          const ivaInOrder = productBd.value / (1 + tax) * tax;
+          ivaAFavor += parseFloat(ivaInOrder.toFixed(2));
+        }
+
+        // flete
+        if (
+          !isInArray && order.guide_status?.toUpperCase() !== "CANCELADO" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "RECHAZADO" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "GUIA_ANULADA" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "PENDIENTE CONFIRMACION" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "PENDIENTE" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "GUIA_GENERADA"
+        ) {
+          flete += parseInt(order.freight_price as string); 
+        }
+
+        // flete devolution
+        if (!isInArray) {
+          devolucionFlete += parseInt(order.return_freight_cost as string);
+        }
+
+        // calculate total fullfilment
+        if (
+          !isInArray && order.guide_status?.toUpperCase() !== "CANCELADO" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "RECHAZADO" &&
+          !isInArray && order.guide_status?.toUpperCase() !== "GUIA_ANULADA"
+        ) {
+          fullFilmentOrder++; 
         }
 
         // set count of devolution orders
@@ -501,6 +554,22 @@ export class OrdersService extends OrdersRepository {
       // shopify
       const shopifyData = await this.loadMetricsShopify(company, from, to);
 
+      // utilidad bruta
+      const utilityBrute = totalOrdersDeliveredDropi - descIva - productCosto - ivaAFavor;
+      utilidadBruta = parseFloat(utilityBrute.toFixed(2));
+
+      // costo operativo
+      const expenses: ExpensesInterface[] | any = await this.expenseServices.getExpensesBetweenDates(
+        from,
+        to,
+        company
+      );
+      const totalExpenses = expenses.reduce(
+        (previousValue: number, currentValue: any) =>
+          previousValue + parseInt(currentValue.amount as string),
+        0
+      );
+
       return {
         totalFreight: totalFreight,
         cancelledDropi: totalCancelDropi,
@@ -524,7 +593,13 @@ export class OrdersService extends OrdersRepository {
         descIva,
         productCosto,
         ivaAFavor,
-        utilidadBruta
+        utilidadBruta: utilidadBruta,
+        flete,
+        devolucionFlete,
+        costoOperativo: totalExpenses,
+        cuatroPorMil,
+        renttax: parseInt(configuration?.renttax as string),
+        fullFilmentTotal: fullFilmentOrder * parseInt(configuration?.fullfilment as string),
       };
     } catch (error: any) {
       throw new Error(error.message);

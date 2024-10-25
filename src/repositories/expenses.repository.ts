@@ -55,6 +55,20 @@ class ExpenseRepository {
     return await this.model.findByIdAndDelete(id);
   }
 
+  /**
+   * get between dates
+   */
+  public getExpensesBetweenDatesQuery (start: string, end: string, company: string): Promise<ExpensesInterface[]> {
+    return this.model.find({
+      start: {
+        $gte: new Date(start),
+      },
+      end: {
+        $lte: new Date(end),
+      },
+      company
+    });
+  }
 }
 
 export default ExpenseRepository;
